@@ -1,13 +1,15 @@
-import { useAccount, useBalance, useConnect, useDisconnect } from 'wagmi'
+import { useAccount, useBalance, useConnect, useDisconnect, useNetwork } from 'wagmi'
 // import { getNetwork } from '@wagmi/core'
 
 
 // import { InjectedConnector } from 'wagmi/connectors/injected'
  
 function Balance() {
+  const { address} = useAccount()
+  const { chain } = useNetwork()
   const { data, isError, isLoading } = useBalance({
-    address: '0x5A384227B65FA093DEC03Ec34e111Db80A040615',
-    chainId: 5
+    address,
+    chainId: chain?.id
   })
   if (isLoading) return <div>Fetching balance…</div>
   if (isError) return <div>Error fetching balance</div>

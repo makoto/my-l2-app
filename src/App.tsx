@@ -1,17 +1,19 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { WagmiConfig, createConfig, mainnet } from 'wagmi'
+import { WagmiConfig, configureChains, createConfig, mainnet } from 'wagmi'
+import { publicProvider} from 'wagmi/providers/public'
+import { goerli} from 'wagmi/chains'
 import { createPublicClient, http } from 'viem'
 import Profile from './Profile'
 import Balance from './Balance'
 
+const { chains, publicClient, webSocketPublicClient} = configureChains([mainnet, goerli], [publicProvider()])
+
 const config = createConfig({
   autoConnect: true,
-  publicClient: createPublicClient({
-    chain: mainnet,
-    transport: http()
-  }),
+  publicClient,
+  webSocketPublicClient,
 })
 
 function App() {
