@@ -1,6 +1,18 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { WagmiConfig, createConfig, mainnet } from 'wagmi'
+import { createPublicClient, http } from 'viem'
+import Profile from './Profile'
+import Balance from './Balance'
+
+const config = createConfig({
+  autoConnect: true,
+  publicClient: createPublicClient({
+    chain: mainnet,
+    transport: http()
+  }),
+})
 
 function App() {
   return (
@@ -18,6 +30,10 @@ function App() {
         >
           Learn React
         </a>
+        <WagmiConfig config={config}>
+          <Profile />
+          <Balance />
+        </WagmiConfig>
       </header>
     </div>
   );
