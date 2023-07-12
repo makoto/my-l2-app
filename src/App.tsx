@@ -7,6 +7,7 @@ import { goerli} from 'wagmi/chains'
 import { createPublicClient, http } from 'viem'
 import Profile from './Profile'
 import Balance from './Balance'
+import Record from './Record'
 
 const { chains, publicClient, webSocketPublicClient} = configureChains([mainnet, goerli], [publicProvider()])
 
@@ -35,6 +36,7 @@ function App() {
         <WagmiConfig config={config}>
           <Profile />
           <Balance />
+          <Record />
         </WagmiConfig>
       </header>
     </div>
