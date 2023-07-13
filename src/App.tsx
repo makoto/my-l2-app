@@ -1,46 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { WagmiConfig, configureChains, createConfig, mainnet } from 'wagmi'
-import { publicProvider} from 'wagmi/providers/public'
-import { goerli} from 'wagmi/chains'
-import { createPublicClient, http } from 'viem'
-import Profile from './Profile'
-import Balance from './Balance'
-import Record from './Record'
+import React, { useState, useContext } from 'react'
+import { ThemeProvider } from 'styled-components'
+import { Heading, Typography, ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
+import Search from './Search'
+import CurrentUserContext from './Context'
 
-const { chains, publicClient, webSocketPublicClient} = configureChains([mainnet, goerli], [publicProvider()])
+const MyComponent = () => {
+  const currentUser = useContext(CurrentUserContext);
 
-const config = createConfig({
-  autoConnect: true,
-  publicClient,
-  webSocketPublicClient,
-})
+  return <p>The current user is {currentUser?.username}.</p>;
+};
 
-function App() {
+const App = () => {
+  const [username, setUsername] = useState('')
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <WagmiConfig config={config}>
-          <Profile />
-          <Balance />
-          <Record />
-        </WagmiConfig>
-      </header>
-    </div>
-  );
+    <ThemeProvider theme={lightTheme}>
+      <ThorinGlobalStyles />
+      <Heading>L2 Resolver</Heading>
+      <Typography>The quick brown foxsss…</Typography>
+
+      <CurrentUserContext.Provider value={{username, setUsername}}>
+        <MyComponent />
+        <Search />
+      </CurrentUserContext.Provider>
+    </ThemeProvider>
+  )
 }
 
 export default App;
