@@ -5,12 +5,6 @@ import Record from './Record'
 import { useAccount, useSwitchNetwork, useConnect, useDisconnect } from 'wagmi'
 import { getNetwork } from '@wagmi/core'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import Select from 'react-select'
-
-const options = [
-  { value: 5, label: 'Goerli' },
-  { value: 420, label: 'Op Goerli' }
-]
 
 const Resolver = () => {
     const currentUser = useContext(CurrentUserContext);
@@ -27,23 +21,14 @@ const Resolver = () => {
     if(currentUser?.resolver){
       return (
         <div>
-          <div style={{ marginBottom: '1em' }}>The current resolver is {currentUser?.resolver}.</div>
-          <Select placeholder="Select Resolver"  options={options} onChange={(e) => {
-            console.log({e})
-            if(isConnected){
-              switchNetwork?.(e?.value)
-            }else{
-              connect({
-                chainId: e?.value,
-                connector: new InjectedConnector(),
-              })  
-            }
-          }} />
-          {/* <Dropdown
+          <div style={{ marginBottom: '1em' }}>
+            The current resolver is {currentUser?.resolver.address} on {currentUser?.resolver.name}
+          </div>
+          <Dropdown
             align="left"
             items={[
               {
-                label: 'Goerli Resolver',
+                label: 'Goerli',
                 onClick: () => {
                   console.log('***Clicked')
                   if(isConnected){
@@ -58,7 +43,7 @@ const Resolver = () => {
                 color: 'text'
               },
               {
-                label: 'Op Goerli Resolver',
+                label: 'Op Goerli',
                 onClick: () => {
                   if(isConnected){
                     switchNetwork?.(420)
@@ -72,8 +57,8 @@ const Resolver = () => {
                 color: 'red'
               },
             ]}
-            label="Select Resolver"
-          /> */}
+            label="Switch Network"
+          />
 
 
 

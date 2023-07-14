@@ -1,7 +1,21 @@
+
+import React, { useState, useContext } from 'react'
 import { useAccount, useSwitchNetwork, useConnect, useDisconnect } from 'wagmi'
 import { getNetwork } from '@wagmi/core'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { Input,  Button, Tag } from '@ensdomains/thorin'
+import { Card,  Button, Tag } from '@ensdomains/thorin'
+import Balance from './Balance'
+import Search from './Search'
+import Resolver from './Resolver'
+import CurrentUserContext from './Context'
+const MyUser = () => {
+  const currentUser = useContext(CurrentUserContext);
+  if(currentUser?.username){
+    return <p>The current user is {currentUser?.username}.</p>;
+  }else{
+    return(<></>)
+  }
+};
 
 function Profile() {
   const { address, connector, isConnected } = useAccount()
@@ -31,6 +45,12 @@ function Profile() {
           </div>
           <div>
             <Button style={{width: "150px"}} onClick={() => disconnect()}>Disconnect</Button>
+            <Balance></Balance>
+            <Card>
+            <Search />
+            </Card>
+            <MyUser />
+            <Resolver />
           </div>
         </div>
       )  

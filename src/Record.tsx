@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react'
 import EditRecord from './EditRecord'
-import { useEnsResolver, useContractRead, useConnect, useAccount, useNetwork, usePublicClient } from 'wagmi'
+import { useEnsAddress, useEnsResolver, useContractRead, useConnect, useAccount, useNetwork, usePublicClient } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { PublicClient, Transport } from "viem";
 import { useEnsText } from './useEnsText'
@@ -22,20 +22,32 @@ function Record() {
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   })
-  const publicClient = usePublicClient();
-  console.log({publicClient})
-  const { data:textData } = useEnsText({
+  const { data:addressData, isError, isLoading } = useEnsAddress({
     name:currentUser?.username || '',
-    key:'com.twitter',
     enabled:!!(currentUser && currentUser.username),
-    chainId:5
+    chainId: 5
   })
-  console.log({textData})
-  if(textData){
+  console.log({addressData, username:currentUser?.username})
+  if(addressData){
     return(<div style={{ marginTop: '1em' }}>
-      twitter:{textData}
+      Address:{addressData}
     </div>)
   }
+
+  // const publicClient = usePublicClient();
+  // console.log({publicClient})
+  // const { data:textData } = useEnsText({
+  //   name:currentUser?.username || '',
+  //   key:'my-record',
+  //   enabled:!!(currentUser && currentUser.username),
+  //   chainId:5
+  // })
+  // console.log({textData})
+  // if(textData){
+  //   return(<div style={{ marginTop: '1em' }}>
+  //     twitter:{textData}
+  //   </div>)
+  // }
   // const { data:resolverAddress, isError, isLoading } = useEnsResolver({
   //   name: 'bedrock.l2-resolver.eth',
   //   chainId: 5

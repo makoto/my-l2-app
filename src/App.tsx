@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { WagmiConfig, configureChains, createConfig, mainnet } from 'wagmi'
-import { FieldSet, Dropdown, ThorinGlobalStyles, lightTheme, DotGridSVG, ExitSVG } from '@ensdomains/thorin'
+import { FieldSet, Dropdown, ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 import { CopySVG, EthSVG, WalletSVG, MoonSVG, Select, Card } from '@ensdomains/thorin'
 import { Checkbox } from '@ensdomains/thorin'
 
@@ -19,18 +19,10 @@ const config = createConfig({
   publicClient,
   webSocketPublicClient,
 })
-const MyUser = () => {
-  const currentUser = useContext(CurrentUserContext);
-  if(currentUser?.username){
-    return <p>The current user is {currentUser?.username}.</p>;
-  }else{
-    return(<></>)
-  }
-};
 
 const App = () => {
   const [username, setUsername] = useState('')
-  const [resolver, setResolver] = useState(null)
+  const [resolver, setResolver] = useState({})
   return (
     <WagmiConfig config={config}>
 
@@ -42,31 +34,7 @@ const App = () => {
           username, setUsername,
           resolver, setResolver
         }}>
-<Dropdown
-  align="left"
-  items={[
-    {
-      label: 'Dashboard',
-      onClick: () => null,
-      color: 'text',
-      icon: <DotGridSVG />,
-    },
-    {
-      label: 'Disconnect',
-      onClick: () => null,
-      color: 'red',
-      icon: <ExitSVG />,
-    },
-  ]} 
-  label="Account"
-/>
           <Profile></Profile>
-          <Balance></Balance>
-          <Card>
-          <Search />
-          </Card>
-          <MyUser />
-          <Resolver />
       </CurrentUserContext.Provider>
       </FieldSet>
     </ThemeProvider>
