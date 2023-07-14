@@ -27,7 +27,8 @@ function Record() {
   const { data:textData } = useEnsText({
     name:currentUser?.username || '',
     key:'com.twitter',
-    enabled:!!(currentUser && currentUser.username)
+    enabled:!!(currentUser && currentUser.username),
+    chainId:5
   })
   console.log({textData})
   if(textData){

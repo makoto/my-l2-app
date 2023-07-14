@@ -1,7 +1,7 @@
-import { useAccount, useBalance, useConnect, useDisconnect } from 'wagmi'
+import { useAccount, useSwitchNetwork, useConnect, useDisconnect } from 'wagmi'
 import { getNetwork } from '@wagmi/core'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { Input,  Button, Field } from '@ensdomains/thorin'
+import { Input,  Button, Tag } from '@ensdomains/thorin'
 
 function Profile() {
   const { address, connector, isConnected } = useAccount()
@@ -10,11 +10,25 @@ function Profile() {
   })
   const { disconnect } = useDisconnect()
   const { chain, chains } = getNetwork()
+  
+  const { isSuccess } = useSwitchNetwork()
+  console.log('Profile', {connector, chain, isConnected, isSuccess})
+
+  function getColor(name?:string){
+    if(name?.match(/Optimism/)){
+      return 'redSecondary'
+    }else{
+      return 'greenSecondary'
+    }
+  }
+
   if (isConnected){
-    console.log({connector, chain, chains})     
     return (
         <div>
-          <div style={{ marginBottom: '1em' }}>Connected to {chain?.name} as {address}</div>
+          <div style={{ marginBottom: '1em' }}>
+            <Tag colorStyle={getColor(chain?.name)} >{chain?.name}</Tag>
+            Connected as {address}
+          </div>
           <div>
             <Button style={{width: "150px"}} onClick={() => disconnect()}>Disconnect</Button>
           </div>

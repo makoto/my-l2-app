@@ -1,7 +1,10 @@
 import React, { useState, useContext } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { WagmiConfig, configureChains, createConfig, mainnet } from 'wagmi'
-import { FieldSet, Heading, Typography, ThorinGlobalStyles, lightTheme, darkTheme } from '@ensdomains/thorin'
+import { FieldSet, Dropdown, ThorinGlobalStyles, lightTheme, DotGridSVG, ExitSVG } from '@ensdomains/thorin'
+import { CopySVG, EthSVG, WalletSVG, MoonSVG, Select, Card } from '@ensdomains/thorin'
+import { Checkbox } from '@ensdomains/thorin'
+
 import { publicProvider} from 'wagmi/providers/public'
 import { goerli, optimismGoerli } from 'wagmi/chains'
 import { createPublicClient, http } from 'viem'
@@ -35,18 +38,36 @@ const App = () => {
     <ThemeProvider theme={lightTheme}>
       <ThorinGlobalStyles />
       <FieldSet legend="L2 Resolver">
-      <Profile></Profile>
-      <Balance></Balance>
         <CurrentUserContext.Provider value={{
           username, setUsername,
           resolver, setResolver
         }}>
+<Dropdown
+  align="left"
+  items={[
+    {
+      label: 'Dashboard',
+      onClick: () => null,
+      color: 'text',
+      icon: <DotGridSVG />,
+    },
+    {
+      label: 'Disconnect',
+      onClick: () => null,
+      color: 'red',
+      icon: <ExitSVG />,
+    },
+  ]} 
+  label="Account"
+/>
+          <Profile></Profile>
+          <Balance></Balance>
+          <Card>
           <Search />
+          </Card>
           <MyUser />
           <Resolver />
-          
       </CurrentUserContext.Provider>
-    
       </FieldSet>
     </ThemeProvider>
     </div>
