@@ -12,6 +12,7 @@ function Search() {
   }
   function searchName() {
     currentUser?.setUsername(name)
+    currentUser?.setResolver('0x123')
   }
 
   return (
@@ -23,6 +24,7 @@ function Search() {
       />
       <Button
         onClick={searchName}
+        style={{width:'100px'}}
       >Search</Button>
     </div>
   )

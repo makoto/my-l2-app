@@ -3,11 +3,13 @@ import React, { useState, useEffect, createContext } from 'react';
 //   username: string;
 // }
 interface CurrentUserContextType {
-    username: string;
-    // resolver: string;
+    username?: string | null
+    resolver?: string | null
+    // network: string | null
     // twitter: string;
-    setUsername: (name:string) => void
-    // handleResolver: () => void
+    setUsername: (name: string) => void
+    setResolver: (address: any) => void
+    // setNetwork: (network: any) => void 
     // handleTwitter: () => void
 }
   

@@ -1,3 +1,4 @@
+import { useState, useContext } from 'react'
 import EditRecord from './EditRecord'
 import { useEnsResolver, useContractRead, useConnect, useAccount, useNetwork, usePublicClient } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
@@ -5,6 +6,8 @@ import { PublicClient, Transport } from "viem";
 import { useEnsText } from './useEnsText'
 // import { getNetwork } from '@wagmi/core'
 import CcipResolver from './CcipResolver.json'
+import CurrentUserContext from './Context'
+import { Button } from '@ensdomains/thorin'
 
 
 const abi = CcipResolver.abi
@@ -13,6 +16,7 @@ const abi = CcipResolver.abi
 
 
 function Record() {
+  const currentUser = useContext(CurrentUserContext);
   const { chain } = useNetwork()
   const { address, connector, isConnected } = useAccount()
   const { connect } = useConnect({
@@ -21,11 +25,16 @@ function Record() {
   const publicClient = usePublicClient();
   console.log({publicClient})
   const { data:textData } = useEnsText({
-    name:'newmatoken.eth',
-    key:'com.twitter'
+    name:currentUser?.username || '',
+    key:'com.twitter',
+    enabled:!!(currentUser && currentUser.username)
   })
   console.log({textData})
-
+  if(textData){
+    return(<div style={{ marginTop: '1em' }}>
+      twitter:{textData}
+    </div>)
+  }
   // const { data:resolverAddress, isError, isLoading } = useEnsResolver({
   //   name: 'bedrock.l2-resolver.eth',
   //   chainId: 5
