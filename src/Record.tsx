@@ -6,11 +6,13 @@ import { PublicClient, Transport } from "viem";
 import { useEnsText } from './useEnsText'
 import { getNetwork } from '@wagmi/core'
 import CcipResolver from './CcipResolver.json'
+import L2PublicResolver from './L2PublicResolver.json'
 import CurrentUserContext from './Context'
 import { Button } from '@ensdomains/thorin'
-
+import {ethers} from 'ethers'
 
 const abi = CcipResolver.abi
+const l2abi = L2PublicResolver.abi
  
 // import { InjectedConnector } from 'wagmi/connectors/injected'
 
@@ -34,6 +36,32 @@ function Record() {
     resolverName:currentUser?.resolver?.name,
     IsResolverName:currentUser?.resolver?.name
   })
+
+  const l2resolverAddress='0x39dc8a3a607970fa9f417d284e958d4ca69296c8'
+  const context = ethers.utils.arrayify('0xDBBC2C0FE2A1D0FB4056B35A22E543BEB715E7FC')
+  const node = ethers.utils.namehash(currentUser?.username || '');
+  console.log('***', {context, node, enabled:!!(currentUser?.username), chainId: chain?.id})
+  const { data, error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({
+    address: l2resolverAddress,
+    abi: l2abi,
+    // functionName: 'addr(bytes,bytes32)',
+    functionName: 'addr',
+    args: [context, node],
+    enabled:!!(currentUser?.username && chain?.id === 420),
+    chainId: 420
+  })
+  console.log('***', {data, contractIsError, contractIsLoading, error})
+  // const L2PublicResolver = L2PublicResolverFactory.attach(l2ResolverAddress);
+  // const context = ethers.utils.arrayify('0xDBBC2C0FE2A1D0FB4056B35A22E543BEB715E7FC')
+  // const node = ethers.utils.namehash(ENS_NAME);
+  // console.log({context, node})
+  // const result = await L2PublicResolver.callStatic.text(context, node,"com.twitter");
+  // console.log({result});
+  // const result2 = await L2PublicResolver.callStatic['addr(bytes,bytes32)'](context, node);
+  // console.log({result2});
+
+
+
   if(addressData){
     return(<div style={{ marginTop: '1em' }}>
       Address:{addressData}
@@ -66,7 +94,7 @@ function Record() {
   //   enabled:!!resolverAddress,
   //   chainId: 5
   // })
-  
+
   // console.log({resolverAddress, abi, data, contractIsError, error})
   // if (isLoading) return <div>Fetching resolver…</div>
   // if (isError) return <div>Error fetching resolver</div>
