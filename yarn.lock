@@ -1581,7 +1581,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.3.1.tgz#d0fce5d07b0620caa282b5131c297bb60f9d87e6"
   integrity sha512-EsBwpc7hBUJWAsNPBmJy4hxWx12v6bshQsldrVmjxJoc3isbxhOrF2IcCpaXxfvq03NwkI7sbsOLXbYuqF/8Ww==
 
-"@ensdomains/thorin@^0.6.41":
+"@ensdomains/thorin@^0.6.40":
   version "0.6.41"
   resolved "https://registry.yarnpkg.com/@ensdomains/thorin/-/thorin-0.6.41.tgz#0a9dd5206ca272d36861a325e3a6e137cea3a9f6"
   integrity sha512-3JERXPop+liW8/cV1OO+dLe7g5OdJzb5j6KysQ4Oh82KpBNqfn3MaQMy+fOPOkR+gG4IE0Iwq2bO002A1SFD7A==
