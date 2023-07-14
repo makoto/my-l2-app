@@ -2,6 +2,7 @@ import { useEnsResolver, useContractRead, useConnect, useAccount, useNetwork, us
 import { InjectedConnector } from 'wagmi/connectors/injected'
 // import { getNetwork } from '@wagmi/core'
 import CcipResolver from './CcipResolver.json'
+import { Input,  Button } from '@ensdomains/thorin'
 const abi = CcipResolver.abi
  
 // import { InjectedConnector } from 'wagmi/connectors/injected'
@@ -20,6 +21,17 @@ function EditRecord() {
   //     {isSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
   //   </div>
   // )
-  <div>hi</div>
+  return (
+    <div>
+      <Input
+        label="New Address"
+        placeholder="0x123"
+      />
+      <Button
+        style={{width:'100px'}}
+      >Update</Button>
+      </div>
+
+  )
 }
 export default EditRecord;

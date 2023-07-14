@@ -13,16 +13,20 @@ import Balance from './Balance'
 import Search from './Search'
 import Resolver from './Resolver'
 import CurrentUserContext from './Context'
+import { ethers } from 'ethers';
+
 const { chains, publicClient, webSocketPublicClient} = configureChains([mainnet, goerli, optimismGoerli], [publicProvider()])
 const config = createConfig({
   autoConnect: true,
   publicClient,
   webSocketPublicClient,
 })
-
 const App = () => {
   const [username, setUsername] = useState('')
   const [resolver, setResolver] = useState({})
+  const [address, setAddress] = useState(null)
+  const [network, setNetwork] = useState(null)
+  
   return (
     <WagmiConfig config={config}>
 
@@ -32,7 +36,8 @@ const App = () => {
       <FieldSet legend="L2 Resolver">
         <CurrentUserContext.Provider value={{
           username, setUsername,
-          resolver, setResolver
+          resolver, setResolver,
+          address, setAddress,
         }}>
           <Profile></Profile>
       </CurrentUserContext.Provider>

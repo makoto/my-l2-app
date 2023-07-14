@@ -3,9 +3,12 @@ import { useEnsResolver, useContractRead, useAccount, useBalance, useConnect, us
 import { Input,  Button } from '@ensdomains/thorin'
 import CurrentUserContext from './Context'
 import CcipResolver from './CcipResolver.json'
+import useEthers from './useEthers';
+
 const abi = CcipResolver.abi
 const GOERLI_CHAINID = 5
 function Search() {
+
   const currentUser = useContext(CurrentUserContext);
   const [name, setName] = useState('');
   const { data:resolverAddress, isError, isLoading } = useEnsResolver({
@@ -20,9 +23,13 @@ function Search() {
     enabled:!!resolverAddress,
     chainId: GOERLI_CHAINID
   })
+  useEthers(currentUser?.username)
+  
+
   const isArray = (val: unknown): val is number[] => (
     Array.isArray(val)
   );
+  console.log('***metadata', {data})
   let networkName: any
   if (isArray(data)) {
     networkName = data[0]

@@ -17,13 +17,15 @@ const Resolver = () => {
     useSwitchNetwork()
     const { chain } = getNetwork()
   
-    console.log({chain, chains})
-    if(currentUser?.resolver){
+    console.log({chain, chains, currentUser})
+    if(currentUser?.resolver?.address){
       return (
         <div>
           <div style={{ marginBottom: '1em' }}>
             The current resolver is {currentUser?.resolver.address} on {currentUser?.resolver.name}
           </div>
+          <Record></Record>
+
           <Dropdown
             align="left"
             items={[
@@ -59,11 +61,6 @@ const Resolver = () => {
             ]}
             label="Switch Network"
           />
-
-
-
-
-          <Record></Record>
         </div>
       );
     }else{

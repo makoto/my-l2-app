@@ -8,14 +8,13 @@ function Balance() {
   const { address} = useAccount()
   const { chain } = useNetwork()
   const { data, isError, isLoading } = useBalance({
-    address,
-    chainId: 5
+    address
   })
   if (isLoading) return <div>Fetching balance…</div>
   if (isError) return <div>Error fetching balance</div>
   return (
     <div>
-      Goerli Balance: {data?.formatted} {data?.symbol}
+      Balance: {data?.formatted} {data?.symbol}
     </div>
   )
 }

@@ -10,11 +10,11 @@ interface ResolverType {
 interface CurrentUserContextType {
     username?: string | null
     resolver?: ResolverType | null
-    // network: string | null
+    address?: string | null
     // twitter: string;
     setUsername: (name: string) => void
     setResolver: (address: any) => void
-    // setNetwork: (network: any) => void 
+    setAddress: (address: any) => void
     // handleTwitter: () => void
 }
   

@@ -8,14 +8,6 @@ import Balance from './Balance'
 import Search from './Search'
 import Resolver from './Resolver'
 import CurrentUserContext from './Context'
-const MyUser = () => {
-  const currentUser = useContext(CurrentUserContext);
-  if(currentUser?.username){
-    return <p>The current user is {currentUser?.username}.</p>;
-  }else{
-    return(<></>)
-  }
-};
 
 function Profile() {
   const { address, connector, isConnected } = useAccount()
@@ -49,7 +41,6 @@ function Profile() {
             <Card>
             <Search />
             </Card>
-            <MyUser />
             <Resolver />
           </div>
         </div>

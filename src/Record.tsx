@@ -4,7 +4,7 @@ import { useEnsAddress, useEnsResolver, useContractRead, useConnect, useAccount,
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { PublicClient, Transport } from "viem";
 import { useEnsText } from './useEnsText'
-// import { getNetwork } from '@wagmi/core'
+import { getNetwork } from '@wagmi/core'
 import CcipResolver from './CcipResolver.json'
 import CurrentUserContext from './Context'
 import { Button } from '@ensdomains/thorin'
@@ -22,17 +22,24 @@ function Record() {
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   })
+  // Have problem getting data from CCIP-read
   const { data:addressData, isError, isLoading } = useEnsAddress({
     name:currentUser?.username || '',
     enabled:!!(currentUser && currentUser.username),
     chainId: 5
   })
-  console.log({addressData, username:currentUser?.username})
+  console.log({
+    addressData,
+    username:currentUser?.username,
+    resolverName:currentUser?.resolver?.name,
+    IsResolverName:currentUser?.resolver?.name
+  })
   if(addressData){
     return(<div style={{ marginTop: '1em' }}>
       Address:{addressData}
     </div>)
   }
+  // const EditRecord = currentUser?.resolver?.name === 'CCIP RESOLVER' ? (<div>Can edit</div>)
 
   // const publicClient = usePublicClient();
   // console.log({publicClient})
@@ -81,6 +88,16 @@ function Record() {
   //     } */}
   //   </div>
   // }
-  return <div>Record</div>
+  return(
+    <div>
+      ETH: {currentUser?.address}
+      {
+        (
+          currentUser?.resolver?.name === 'CCIP RESOLVER'
+          && chain?.name === 'Optimism Goerli'
+        ) ? (<EditRecord></EditRecord>) : (<></>)
+      }
+    </div>
+  )
 }
 export default Record;
