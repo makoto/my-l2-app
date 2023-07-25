@@ -50,7 +50,7 @@ function Record() {
     enabled:!!(currentUser?.username && chain?.id === 420),
     chainId: 420
   })
-  console.log('***', {data, contractIsError, contractIsLoading, error})
+  console.log('***Record', {data, contractIsError, contractIsLoading, error})
   // const L2PublicResolver = L2PublicResolverFactory.attach(l2ResolverAddress);
   // const context = ethers.utils.arrayify('0xDBBC2C0FE2A1D0FB4056B35A22E543BEB715E7FC')
   // const node = ethers.utils.namehash(ENS_NAME);
