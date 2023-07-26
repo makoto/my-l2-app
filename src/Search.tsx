@@ -2,12 +2,14 @@ import { useState, useContext, useEffect } from 'react';
 import { useEnsResolver, useContractRead, useAccount, useBalance, useConnect, useDisconnect, useNetwork } from 'wagmi'
 import { Input,  Button } from '@ensdomains/thorin'
 import CurrentUserContext from './Context'
-import CcipResolver from './CcipResolver.json'
+// import CcipResolver from './CcipResolver.json'
+import {abi} from './CcipResolver'
 import useEthers from './useEthers';
 import { dnsEncode } from "ethers/lib/utils";
 // > require('ethers').utils.dnsEncode('alice123.eth')
 
-const abi = CcipResolver.abi
+// const abi = CcipResolver.abi
+
 const GOERLI_CHAINID = 5
 function Search() {
 
@@ -18,14 +20,19 @@ function Search() {
     enabled:!!currentUser?.username,
     chainId: GOERLI_CHAINID
   })
-  const encodedName = dnsEncode(name)
-  console.log('***search', {name, encodedName, abi, resolverAddress})
+  let encodedName
+  try{
+    encodedName = dnsEncode(name)
+  }catch(e){
+    console.log('***search1',{e})
+  }
+  console.log('***search2', {name, encodedName, abi, resolverAddress})
   const { data , error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({
     address: resolverAddress,
-    abi,
+    abi:["function metadata(bytes)"],
     functionName: 'metadata',
     args: [ encodedName ],
-    enabled:!!resolverAddress,
+    enabled:!!encodedName && !!resolverAddress,
     chainId: GOERLI_CHAINID
   })
   useEthers(currentUser?.username)

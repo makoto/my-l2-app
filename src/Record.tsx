@@ -5,13 +5,12 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { PublicClient, Transport } from "viem";
 import { useEnsText } from './useEnsText'
 import { getNetwork } from '@wagmi/core'
-import CcipResolver from './CcipResolver.json'
+import { abi } from './CcipResolver'
 import L2PublicResolver from './L2PublicResolver.json'
 import CurrentUserContext from './Context'
 import { Button } from '@ensdomains/thorin'
 import {ethers} from 'ethers'
 
-const abi = CcipResolver.abi
 const l2abi = L2PublicResolver.abi
  
 // import { InjectedConnector } from 'wagmi/connectors/injected'
@@ -39,6 +38,7 @@ function Record() {
 
   const l2resolverAddress='0x39dc8a3a607970fa9f417d284e958d4ca69296c8'
   const context = ethers.utils.arrayify('0xDBBC2C0FE2A1D0FB4056B35A22E543BEB715E7FC')
+  console.log('**record:username', currentUser?.username)
   const node = ethers.utils.namehash(currentUser?.username || '');
   console.log('***', {context, node, enabled:!!(currentUser?.username), chainId: chain?.id})
   const { data, error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({

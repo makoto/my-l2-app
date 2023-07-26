@@ -1,9 +1,9 @@
 import { useEnsResolver, useContractRead, useConnect, useAccount, useNetwork, useContractWrite } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 // import { getNetwork } from '@wagmi/core'
-import CcipResolver from './CcipResolver.json'
+import { abi } from './CcipResolver'
 import { Input,  Button } from '@ensdomains/thorin'
-const abi = CcipResolver.abi
+
  
 // import { InjectedConnector } from 'wagmi/connectors/injected'
  
