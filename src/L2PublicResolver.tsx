@@ -415,35 +415,6 @@ export const abi = [
           "internalType": "bytes32",
           "name": "node",
           "type": "bytes32"
-        },
-        {
-          "internalType": "uint256",
-          "name": "coinType",
-          "type": "uint256"
-        }
-      ],
-      "name": "addr",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "context",
-          "type": "bytes"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "node",
-          "type": "bytes32"
         }
       ],
       "name": "addr",

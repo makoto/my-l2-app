@@ -26,15 +26,15 @@ function Search() {
   }catch(e){
     console.log('***search1',{e})
   }
-  console.log('***search2', {name, encodedName, abi, resolverAddress})
   const { data , error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({
     address: resolverAddress,
-    abi:["function metadata(bytes)"],
+    abi,
     functionName: 'metadata',
     args: [ encodedName ],
     enabled:!!encodedName && !!resolverAddress,
     chainId: GOERLI_CHAINID
   })
+  console.log('***search2', {name, encodedName, resolverAddress, error})
   useEthers(currentUser?.username)
   
 
@@ -42,17 +42,24 @@ function Search() {
     Array.isArray(val)
   );
   console.log('***metadata', {data})
-  let networkName: any
+  let networkName: any, coinType: any, graphqlUrl: any, storageType: any, encodedData:any
   if (isArray(data)) {
     networkName = data[0]
-    // const isBigInt = data[1] === typeof "bigint"
-    console.log('***metadata2', data[1])
+    coinType = data[1]
+    graphqlUrl = data[2]
+    storageType = data[3]
+    encodedData = data[4]
+    console.log('***metadata2', {coinType})
   }
   useEffect(() => {
     if(resolverAddress){
       currentUser?.setResolver({
-        name: networkName || 'Goerli',
         address: resolverAddress,
+        networkName,
+        coinType,
+        graphqlUrl,
+        storageType,
+        encodedData,    
       })
     }    
   }, [resolverAddress, networkName]);

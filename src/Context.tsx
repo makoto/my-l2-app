@@ -3,8 +3,12 @@ import React, { useState, useEffect, createContext } from 'react';
 //   username: string;
 // }
 interface ResolverType {
-    name?: string,
     address?: string
+    networkName?: string,
+    coinType?: any
+    graphqlUrl?: any
+    storageType?: any
+    encodedData?: any
 }
 
 interface CurrentUserContextType {

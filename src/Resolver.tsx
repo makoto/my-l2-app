@@ -61,7 +61,26 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
       return (
         <div>
           <Card>
-            The current resolver is {currentUser?.resolver.address} on {currentUser?.resolver.name}
+            The current resolver is {currentUser?.resolver.address}.
+            <h5>Metadata</h5>
+            <ul>
+              <li>
+                networkName: {currentUser?.resolver.networkName}
+              </li>
+              <li>
+                coinType: {currentUser?.resolver.coinType}
+              </li>
+              <li>
+                graphqlUrl:{currentUser?.resolver.graphqlUrl}
+              </li>
+              <li>
+                storageType:{currentUser?.resolver.storageType}
+              </li>
+              <li>
+                encodedData:{currentUser?.resolver.encodedData}
+              </li>
+
+            </ul>
           </Card>
           {
             chain?.id === 5 ? (

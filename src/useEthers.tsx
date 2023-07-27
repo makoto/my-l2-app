@@ -12,7 +12,6 @@ export default function useEthers(name:string | null | undefined) {
         provider.getResolver(name).then(r => {
           console.log('***getResolver', r)
           r?.getAddress().then(a => {
-            console.log('***a', a)
             currentUser?.setAddress(a)
           })
         })
