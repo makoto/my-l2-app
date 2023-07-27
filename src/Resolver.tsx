@@ -58,6 +58,8 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
     console.log({name, getVerifierOfDomainData, getVerifierOfDomainError, username:currentUser?.username})
 
     console.log({chain, chains, currentUser})
+    const cannotSetResolver = chain?.id !== 5
+    const cannotSetVerifier = chain?.id !== 5
     if(currentUser?.resolver?.address){
       return (
         <div>
@@ -83,45 +85,47 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 
             </ul>
           </Card>
-          {
-            chain?.id === 5 ? (
-            <div>
-              <Heading> How to setup up Record on L2</Heading>
-              <h3>Step 1: Change Resolver to Bedrock CCIP Resolver</h3>
-              <Dropdown
-                align="left"
-                items={[
-                  {
-                    label: 'Default Resolver',
-                    onClick: () => {
-                      console.log('***Clicked', {name: currentUser?.username, node, defaultResolverAddress})
-                      write({args:[node, defaultResolverAddress]})
-                    },  
-                    color: 'text'
-                  },
-                  {
-                    label: 'Bedrock Ccip Resolver',
-                    onClick: () => {
-                      console.log('***Clicked', {name: currentUser?.username, node, bedrockResolverAddress})
-                      write({args:[node, bedrockResolverAddress]})
-                    },  
-                    color: 'red'
-                  },
-                ]}
-                label="Select Resolver"
-              />
-              <h3>Step 2: Set verifier</h3>
-              <Button style={{width:'150px'}} onClick={ () => {
-                console.log('***', {node, L2_PUBLIC_RESOLVER_VERIFIER, URL})
-                setVerifierWrite({
-                  args:[node, L2_PUBLIC_RESOLVER_VERIFIER, [URL]]
-                })
-              }}  >Set Verifier</Button>
-            </div>):(<div>You cannot select a resolver</div>)
-          }
+          <div>
+            <Heading> How to setup up Record on L2</Heading>
+            <h3>Step 1: Change Resolver to Bedrock CCIP Resolver</h3>
+            {cannotSetResolver? (<Button disabled={true} style={{width:'200px'}} >Select Resolver</Button>) : (
+            <Dropdown
+              align="left"
+              items={[
+                {
+                  label: 'Default Resolver',
+                  onClick: () => {
+                    console.log('***Clicked', {name: currentUser?.username, node, defaultResolverAddress})
+                    write({args:[node, defaultResolverAddress]})
+                  },  
+                  color: 'text'
+                },
+                {
+                  label: 'Bedrock Ccip Resolver',
+                  onClick: () => {
+                    console.log('***Clicked', {name: currentUser?.username, node, bedrockResolverAddress})
+                    write({args:[node, bedrockResolverAddress]})
+                  },  
+                  color: 'red'
+                },
+              ]}
+              label="Select Resolver"
+            />
+            )}
+            <h3>Step 2: Set verifier</h3>
+            <Button
+              disabled={cannotSetVerifier}
+              style={{width:'150px'}} onClick={ () => {
+              console.log('***', {node, L2_PUBLIC_RESOLVER_VERIFIER, URL})
+              setVerifierWrite({
+                args:[node, L2_PUBLIC_RESOLVER_VERIFIER, [URL]]
+              })
+            }}  >Set Verifier</Button>
+          </div>
+          
           <h3>Step 3: Switch Network to OP Goerli</h3>
           <Button
-          style={{width:'14em'}}
+          style={{width:'16em'}}
           onClick={()=>{
             window.ethereum.request({
               method: "wallet_addEthereumChain",
@@ -140,46 +144,12 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
               console.log({error})
             });
           }}
-          >Add Op Goerli Network</Button>
-                    <Dropdown
-            align="left"
-            items={[
-              {
-                label: 'Goerli',
-                onClick: () => {
-                  console.log('***Clicked')
-                  if(isConnected){
-                    switchNetwork?.(5)
-                  }else{
-                    connect({
-                      chainId: 5,
-                      connector: new InjectedConnector(),
-                    })  
-                  }
-                },  
-                color: 'text'
-              },
-              {
-                label: 'Op Goerli',
-                onClick: () => {
-                  if(isConnected){
-                    switchNetwork?.(420)
-                  }else{
-                    connect({
-                      chainId: 420,
-                      connector: new InjectedConnector(),
-                    })  
-                  }
-                },  
-                color: 'red'
-              },
-            ]}
-            label="Switch Network"
-          />
-
+          >Switch to Op Goerli Network</Button>
           <Card>
             <Record></Record>
           </Card>
+          <h3 style={{margin:'1em 0'}}>Step 4: Update Record on L2</h3>
+
           <EditRecord></EditRecord>
         </div>
       );
