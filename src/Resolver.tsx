@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
 import CurrentUserContext from './Context'
 import { Heading, Card,  Button, Field, Dropdown } from '@ensdomains/thorin'
+import EditRecord from './EditRecord'
 import Record from './Record'
 import { useAccount, useContractWrite, useContractRead, useSwitchNetwork, useConnect, useDisconnect } from 'wagmi'
 import { getNetwork } from '@wagmi/core'
@@ -179,6 +180,7 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
           <Card>
             <Record></Record>
           </Card>
+          <EditRecord></EditRecord>
         </div>
       );
     }else{

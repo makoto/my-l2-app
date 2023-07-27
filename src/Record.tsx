@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react'
-import EditRecord from './EditRecord'
+
 import { useEnsAddress, useContractRead, useConnect, useAccount, useNetwork, usePublicClient } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { PublicClient, Transport } from "viem";
@@ -29,7 +29,8 @@ function Record() {
   })
 
   const l2resolverAddress='0x39dc8a3a607970fa9f417d284e958d4ca69296c8'
-  const context = '0xDBBC2C0FE2A1D0FB4056B35A22E543BEB715E7FC'
+  // const context = '0xDBBC2C0FE2A1D0FB4056B35A22E543BEB715E7FC'
+  const context = address || ''
   const node = ethers.utils.namehash(currentUser?.username || '');
   const { data:l2AddrData, error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({
     address: l2resolverAddress,
@@ -43,13 +44,12 @@ function Record() {
     <div>
       <ul>
         <li>
-          ETH Address via CCIP-read: {currentUser?.address}
+          ETH Address on Goerli via CCIP-read: {currentUser?.address}
         </li>
         <li>
           ETH Address for {context.slice(0,5)}... on OP: { JSON.stringify(l2AddrData) }
         </li>
       </ul>
-      <EditRecord></EditRecord>
     </div>
   )
 }
