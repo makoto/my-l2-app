@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import CurrentUserContext from './Context'
-import { Input,  Button, Field, Dropdown } from '@ensdomains/thorin'
+import { Heading, Card,  Button, Field, Dropdown } from '@ensdomains/thorin'
 import Record from './Record'
 import { useAccount, useContractWrite, useContractRead, useSwitchNetwork, useConnect, useDisconnect } from 'wagmi'
 import { getNetwork } from '@wagmi/core'
@@ -9,14 +9,12 @@ import { utils } from 'ethers'
 import {abi as ENSAbi} from './ENS'
 import { abi as CCIPAbi } from './CcipResolver'
 console.log({ENSAbi, CCIPAbi})
-// Registry
-// ["function setResolver(bytes32 node, address resolver) external"]
-// Resolver
-// ["function setVerifierForDomain(bytes32 node, address resolverAddress, string[] memory urls) external "]
-// getVerifierOfDomain
+
 const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 
   const Resolver = () => {
+    const URL = "http://localhost:8081/{sender}/{data}"
+    const L2_PUBLIC_RESOLVER_VERIFIER = "0x67AfD6d796d9212541016A2D10b28CC55021Cade"
     const defaultResolverAddress = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
     const bedrockResolverAddress = '0x49e0AeC78ec0dF50852E99116E524a43bE91B789'
     
@@ -32,7 +30,8 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
     
     
     const node = utils.namehash(currentUser?.username || '');
-    console.log('**Resolver', {currentUser, node, ENSAbi})
+    const name = utils.dnsEncode(currentUser?.username || '');
+    console.log('**Resolver', {currentUser, node, name, ENSAbi})
     const { isLoading:contractIsLoading, write } = useContractWrite({
       address: registryAddress,
       abi: ENSAbi,
@@ -40,17 +39,35 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
       chainId: 5
     })
   
+    const { isLoading:setVerifierContractIsLoading, write:setVerifierWrite } = useContractWrite({
+      address: bedrockResolverAddress,
+      abi: CCIPAbi,
+      functionName: 'setVerifierForDomain',
+      chainId: 5
+    })
+
+    const { data:getVerifierOfDomainData, error:getVerifierOfDomainError, isError:getVerifierOfDomainContractIsError, isLoading:getVerifierOfDomainContractIsLoading } = useContractRead({
+      address: bedrockResolverAddress,
+      abi: CCIPAbi,
+      functionName: 'getVerifierOfDomain',
+      args: [name],
+      enabled:!!(currentUser?.username),
+      chainId: 5
+    })
+    console.log({name, getVerifierOfDomainData, getVerifierOfDomainError, username:currentUser?.username})
 
     console.log({chain, chains, currentUser})
     if(currentUser?.resolver?.address){
       return (
         <div>
-          <div style={{ marginBottom: '1em' }}>
+          <Card>
             The current resolver is {currentUser?.resolver.address} on {currentUser?.resolver.name}
-          </div>
+          </Card>
           {
             chain?.id === 5 ? (
             <div>
+              <Heading> How to setup up Record on L2</Heading>
+              <h3>Step 1: Change Resolver to Bedrock CCIP Resolver</h3>
               <Dropdown
                 align="left"
                 items={[
@@ -73,11 +90,38 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
                 ]}
                 label="Select Resolver"
               />
-              <Button>Set Verifier</Button>
+              <h3>Step 2: Set verifier</h3>
+              <Button style={{width:'150px'}} onClick={ () => {
+                console.log('***', {node, L2_PUBLIC_RESOLVER_VERIFIER, URL})
+                setVerifierWrite({
+                  args:[node, L2_PUBLIC_RESOLVER_VERIFIER, [URL]]
+                })
+              }}  >Set Verifier</Button>
             </div>):(<div>You cannot select a resolver</div>)
           }
-          <Record></Record>          
-          <Dropdown
+          <h3>Step 3: Switch Network to OP Goerli</h3>
+          <Button
+          style={{width:'14em'}}
+          onClick={()=>{
+            window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [{
+                chainId: "0x1a4",
+                rpcUrls: ["https://endpoints.omniatech.io/v1/op/goerli/public"],
+                chainName: "Optimism Goerli Testnet",
+                nativeCurrency: {
+                  name: "ETH",
+                  symbol: "ETH",
+                  decimals: 18
+                },
+                blockExplorerUrls: ["https://goerli-optimism.etherscan.io/"]
+              }]
+            }).catch((error:any)=>{
+              console.log({error})
+            });
+          }}
+          >Add Op Goerli Network</Button>
+                    <Dropdown
             align="left"
             items={[
               {
@@ -112,6 +156,10 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
             ]}
             label="Switch Network"
           />
+
+          <Card>
+            <Record></Record>
+          </Card>
         </div>
       );
     }else{

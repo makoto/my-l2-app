@@ -38,9 +38,7 @@ function Profile() {
           <div>
             <Button style={{width: "150px"}} onClick={() => disconnect()}>Disconnect</Button>
             <Balance></Balance>
-            <Card>
             <Search />
-            </Card>
             <Resolver />
           </div>
         </div>
