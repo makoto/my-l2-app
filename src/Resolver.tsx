@@ -74,18 +74,18 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
       verifierAddress = parsed.verifierAddress
       verifierNode = getVerifierOfDomainData[1]
     }
-    if(currentUser?.resolver?.address){
+    // if(currentUser?.resolver?.address){
       return (
         <div>
           <Card>
             <h5>{currentUser?.username}</h5>
             <ul>
               <li>Owned by {currentUser?.nameOwner}.</li>
-              <li>The current resolver is {currentUser?.resolver.address}.</li>
+              <li>The current resolver is {currentUser?.resolver?.address}.</li>
               <li>node: {node}</li>
               <li>encoded name: {name}</li>
             </ul>            
-            { currentUser?.resolver.networkName && (
+            { currentUser?.resolver?.networkName && (
               <div>
               <h5>Metadata</h5>
               <ul>
@@ -186,8 +186,8 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
           <EditRecord></EditRecord>
         </div>
       );
-    }else{
-      return(<></>)
-    }
+    // }else{
+    //   return(<></>)
+    // }
   };
   export default Resolver
