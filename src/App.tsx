@@ -4,7 +4,7 @@ import { WagmiConfig, configureChains, createConfig, mainnet } from 'wagmi'
 import { FieldSet, Dropdown, ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 import { CopySVG, EthSVG, WalletSVG, MoonSVG, Select, Card } from '@ensdomains/thorin'
 import { Checkbox } from '@ensdomains/thorin'
-
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 import { publicProvider} from 'wagmi/providers/public'
 import { goerli, optimismGoerli } from 'wagmi/chains'
 import { createPublicClient, http } from 'viem'
@@ -26,8 +26,15 @@ const App = () => {
   const [resolver, setResolver] = useState({})
   const [address, setAddress] = useState(null)
   const [network, setNetwork] = useState(null)
+  const [nameOwner, setNameOwner] = useState(null)
   
+  const client = new ApolloClient({
+    cache: new InMemoryCache(),
+    uri: "https://api.thegraph.com/subgraphs/name/ensdomains/ensgoerli"
+  });
+
   return (
+    <ApolloProvider client={client}>
     <WagmiConfig config={config}>
 
     <div className="App"   style={{ width: '80%' }}>
@@ -38,6 +45,7 @@ const App = () => {
           username, setUsername,
           resolver, setResolver,
           address, setAddress,
+          nameOwner, setNameOwner
         }}>
           <Profile></Profile>
       </CurrentUserContext.Provider>
@@ -45,6 +53,7 @@ const App = () => {
     </ThemeProvider>
     </div>
     </WagmiConfig>
+    </ApolloProvider>
   )
 }
 

@@ -31,11 +31,11 @@ function Profile() {
   if (isConnected){
     return (
         <div>
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <Button style={{width: "150px"}} onClick={() => disconnect()}>Disconnect</Button>
             <div>
               Connected on
-              <Tag style={{ display: 'inline' }} colorStyle={getColor(chain?.name)} >{chain?.name}</Tag>
+              <Tag style={{ display: 'inline'  }} colorStyle={getColor(chain?.name)} >{chain?.name}</Tag>
               as {address} 
             </div>
           </div>

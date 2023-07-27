@@ -17,7 +17,6 @@ function EditRecord() {
   const { address, connector, isConnected } = useAccount()
   const currentUser = useContext(CurrentUserContext);
   const l2resolverAddress='0x39dc8a3a607970fa9f417d284e958d4ca69296c8'
-  const context = address || ''
   const cannotEditL2Record = chain?.id !== 420
   const { data, isLoading, isSuccess, write } = useContractWrite({
     address: l2resolverAddress,
@@ -41,7 +40,7 @@ function EditRecord() {
       >{isLoading ? (<Spinner></Spinner>): (<div>Update</div>)}</Button>
       {data? (<div>
         <a style={{color:"blue"}}
-          target="_blank" href={`https://goerli-optimism.etherscan.io/address/${data.hash}`}>
+          target="_blank" href={`https://goerli-optimism.etherscan.io/tx/${data.hash}`}>
           {data.hash}
         </a>
       </div>) : '' }

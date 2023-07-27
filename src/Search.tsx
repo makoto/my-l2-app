@@ -1,16 +1,31 @@
 import { useState, useContext, useEffect } from 'react';
 import { useEnsResolver, useContractRead, useAccount, useBalance, useConnect, useDisconnect, useNetwork } from 'wagmi'
 import { Input,  Button } from '@ensdomains/thorin'
+import { gql, useQuery } from '@apollo/client';
+import { utils } from 'ethers'
 import CurrentUserContext from './Context'
 // import CcipResolver from './CcipResolver.json'
 import {abi} from './CcipResolver'
 import useEthers from './useEthers';
 import { dnsEncode } from "ethers/lib/utils";
-// > require('ethers').utils.dnsEncode('alice123.eth')
-
-// const abi = CcipResolver.abi
-
 const GOERLI_CHAINID = 5
+const GET_NAME = gql`
+  query GetDomains($name: String!) {
+    domains(where:{name:$name}) {
+      id
+      name
+      labelName
+      labelhash
+      wrappedOwner{
+        id
+      }
+      owner{
+        id
+      }
+    }
+  }
+`;
+
 function Search() {
 
   const currentUser = useContext(CurrentUserContext);
@@ -36,12 +51,20 @@ function Search() {
   })
   console.log('***search2', {name, encodedName, resolverAddress, error})
   useEthers(currentUser?.username)
-  
-
+  const { loading:queryLoading, error:queryError, data:queryData } = useQuery(GET_NAME, {
+    variables: { name: currentUser?.username },
+    skip:(!currentUser?.username)
+  });
+  const domain = queryData?.domains?.length > 0 && queryData?.domains[0]
+  const extractOwner = (domain:any)=>{
+    const id = domain?.wrappedOwner ? domain?.wrappedOwner?.id : domain?.owner?.id
+    return id && utils.getAddress(id)
+  }
+  const nameOwner = extractOwner(domain)
+  console.log('***search3', {resolverAddress, name, queryLoading, nameOwner, queryData})
   const isArray = (val: unknown): val is number[] => (
     Array.isArray(val)
   );
-  console.log('***metadata', {data})
   let networkName: any, coinType: any, graphqlUrl: any, storageType: any, encodedData:any
   if (isArray(data)) {
     networkName = data[0]
@@ -59,10 +82,15 @@ function Search() {
         coinType,
         graphqlUrl,
         storageType,
-        encodedData,    
+        encodedData
       })
     }    
   }, [resolverAddress, networkName]);
+  useEffect(() => {
+    if(!!nameOwner && !queryLoading){
+      currentUser?.setNameOwner(nameOwner)
+    }    
+  }, [nameOwner]);
 
   function handleChange(event:any) {
     setName(event.target.value)
@@ -70,6 +98,13 @@ function Search() {
   function searchName() {
     currentUser?.setUsername(name)
   }
+  function clearName() {
+    currentUser?.setResolver({})
+    currentUser?.setAddress(null)
+    currentUser?.setNameOwner(null)
+    currentUser?.setUsername('')
+  }
+
   console.log({networkName})
   return (
     <div>
@@ -78,10 +113,16 @@ function Search() {
         placeholder="vitalik.eth"
         onChange={handleChange}
       />
-      <Button
-        onClick={searchName}
-        style={{width:'100px'}}
-      >Search</Button>
+      <div style={{display:'flex'}}>
+        <Button
+          onClick={searchName}
+          style={{width:'100px'}}
+        >Search</Button>
+        <Button
+          onClick={clearName}
+          style={{width:'100px'}}
+        >Clear</Button>
+      </div>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import CurrentUserContext from './Context'
-import { Heading, Card,  Button, Field, Dropdown } from '@ensdomains/thorin'
+import { Heading, Card,  Button, Field, Dropdown, Spinner } from '@ensdomains/thorin'
 import EditRecord from './EditRecord'
 import Record from './Record'
 import { useAccount, useContractWrite, useContractRead, useSwitchNetwork, useConnect, useDisconnect } from 'wagmi'
@@ -33,7 +33,7 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
     const node = utils.namehash(currentUser?.username || '');
     const name = utils.dnsEncode(currentUser?.username || '');
     console.log('**Resolver', {currentUser, node, name, ENSAbi})
-    const { isLoading:contractIsLoading, write } = useContractWrite({
+    const { isLoading:setResolverIsLoading, write } = useContractWrite({
       address: registryAddress,
       abi: ENSAbi,
       functionName: 'setResolver',
@@ -47,7 +47,7 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
       chainId: 5
     })
 
-    const { data:getVerifierOfDomainData, error:getVerifierOfDomainError, isError:getVerifierOfDomainContractIsError, isLoading:getVerifierOfDomainContractIsLoading } = useContractRead({
+    const { data: getVerifierOfDomainData, error:getVerifierOfDomainError, isError:getVerifierOfDomainContractIsError, isLoading:getVerifierOfDomainContractIsLoading } = useContractRead({
       address: bedrockResolverAddress,
       abi: CCIPAbi,
       functionName: 'getVerifierOfDomain',
@@ -57,33 +57,57 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
     })
     console.log({name, getVerifierOfDomainData, getVerifierOfDomainError, username:currentUser?.username})
 
-    console.log({chain, chains, currentUser})
-    const cannotSetResolver = chain?.id !== 5
-    const cannotSetVerifier = chain?.id !== 5
+    console.log({chain, chains, currentUser, CCIPAbi})
+    const isOwnedByUser = currentUser?.nameOwner === address
+    const cannotSetResolver = chain?.id !== 5 || setResolverIsLoading || !isOwnedByUser
+    const cannotSetVerifier = chain?.id !== 5 || setVerifierContractIsLoading || !isOwnedByUser
+    const cannotSwitchToOp  = chain?.id !== 5 || !isOwnedByUser
+    const isArray = (val: unknown): val is number[] => (
+      Array.isArray(val)
+    );
+    let ccipVerifier, gatewayUrls, verifierAddress, verifierNode
+    if(isArray(getVerifierOfDomainData)){
+      ccipVerifier = getVerifierOfDomainData[0]
+      // Types are blowing up so had to workd around.
+      const parsed = JSON.parse(JSON.stringify(ccipVerifier))
+      gatewayUrls = parsed.gatewayUrls
+      verifierAddress = parsed.verifierAddress
+      verifierNode = getVerifierOfDomainData[1]
+    }
     if(currentUser?.resolver?.address){
       return (
         <div>
           <Card>
-            The current resolver is {currentUser?.resolver.address}.
-            <h5>Metadata</h5>
+            <h5>{currentUser?.username}</h5>
             <ul>
-              <li>
-                networkName: {currentUser?.resolver.networkName}
-              </li>
-              <li>
-                coinType: {currentUser?.resolver.coinType}
-              </li>
-              <li>
-                graphqlUrl:{currentUser?.resolver.graphqlUrl}
-              </li>
-              <li>
-                storageType:{currentUser?.resolver.storageType}
-              </li>
-              <li>
-                encodedData:{currentUser?.resolver.encodedData}
-              </li>
-
-            </ul>
+              <li>Owned by {currentUser?.nameOwner}.</li>
+              <li>The current resolver is {currentUser?.resolver.address}.</li>
+              <li>node: {node}</li>
+              <li>encoded name: {name}</li>
+            </ul>            
+            { currentUser?.resolver.networkName && (
+              <div>
+              <h5>Metadata</h5>
+              <ul>
+                <li>
+                  networkName: {currentUser?.resolver.networkName}
+                </li>
+                <li>
+                  coinType: {currentUser?.resolver.coinType}
+                </li>
+                <li>
+                  graphqlUrl:{currentUser?.resolver.graphqlUrl}
+                </li>
+                <li>
+                  storageType:{currentUser?.resolver.storageType}
+                </li>
+                <li>
+                  encodedData:{currentUser?.resolver.encodedData}
+                </li>
+              </ul>
+              </div>              
+            )}
+            <Record></Record>
           </Card>
           <div>
             <Heading> How to setup up Record on L2</Heading>
@@ -113,6 +137,15 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
             />
             )}
             <h3>Step 2: Set verifier</h3>
+            {getVerifierOfDomainData ? (
+              <Card>
+                <ul>
+                  <li>Verifier address:{verifierAddress}</li>
+                  <li>Gateway urls: {JSON.stringify(gatewayUrls)}</li>
+                  <li>node:{verifierNode}</li>
+                </ul>
+              </Card>
+            ): ''}
             <Button
               disabled={cannotSetVerifier}
               style={{width:'150px'}} onClick={ () => {
@@ -120,11 +153,14 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
               setVerifierWrite({
                 args:[node, L2_PUBLIC_RESOLVER_VERIFIER, [URL]]
               })
-            }}  >Set Verifier</Button>
+            }}  >
+              {setVerifierContractIsLoading ? (<Spinner></Spinner>) : ('Set Verifier')}
+            </Button>
           </div>
           
           <h3>Step 3: Switch Network to OP Goerli</h3>
           <Button
+          disabled={cannotSwitchToOp}
           style={{width:'16em'}}
           onClick={()=>{
             window.ethereum.request({
@@ -145,9 +181,6 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
             });
           }}
           >Switch to Op Goerli Network</Button>
-          <Card>
-            <Record></Record>
-          </Card>
           <h3 style={{margin:'1em 0'}}>Step 4: Update Record on L2</h3>
 
           <EditRecord></EditRecord>

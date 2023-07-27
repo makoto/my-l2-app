@@ -9,16 +9,18 @@ interface ResolverType {
     graphqlUrl?: any
     storageType?: any
     encodedData?: any
+    nameOwner?: string
 }
 
 interface CurrentUserContextType {
     username?: string | null
     resolver?: ResolverType | null
     address?: string | null
-    // twitter: string;
+    nameOwner?: string | null
     setUsername: (name: string) => void
     setResolver: (address: any) => void
     setAddress: (address: any) => void
+    setNameOwner: (address: any) => void
     // handleTwitter: () => void
 }
   
