@@ -6,12 +6,11 @@ import { PublicClient, Transport } from "viem";
 import { useEnsText } from './useEnsText'
 import { getNetwork } from '@wagmi/core'
 import { abi } from './CcipResolver'
-import L2PublicResolver from './L2PublicResolver.json'
+import { abi as l2abi } from './L2PublicResolver'
 import CurrentUserContext from './Context'
 import { Button } from '@ensdomains/thorin'
 import {ethers} from 'ethers'
 
-const l2abi = L2PublicResolver.abi
  
 // import { InjectedConnector } from 'wagmi/connectors/injected'
 
@@ -23,7 +22,7 @@ function Record() {
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   })
-  // Have problem getting data from CCIP-read
+  // Using ethers.js
   const { data:addressData, isError, isLoading } = useEnsAddress({
     name:currentUser?.username || '',
     enabled:!!(currentUser && currentUser.username),
@@ -40,17 +39,17 @@ function Record() {
   const context = ethers.utils.arrayify('0xDBBC2C0FE2A1D0FB4056B35A22E543BEB715E7FC')
   console.log('**record:username', currentUser?.username)
   const node = ethers.utils.namehash(currentUser?.username || '');
-  console.log('***', {context, node, enabled:!!(currentUser?.username), chainId: chain?.id})
-  const { data, error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({
+  console.log('***Record0', {l2abi,context, node, enabled:!!(currentUser?.username), chainId: chain?.id})
+  const { data:l2AddrData, error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({
     address: l2resolverAddress,
     abi: l2abi,
     // functionName: 'addr(bytes,bytes32)',
     functionName: 'addr',
-    args: [context, node],
-    enabled:!!(currentUser?.username && chain?.id === 420),
+    args: [context, node, 60],
+    enabled:!!(currentUser?.username),
     chainId: 420
   })
-  console.log('***Record', {data, contractIsError, contractIsLoading, error})
+  console.log('***Record1', {l2AddrData, contractIsError, contractIsLoading, error, addressData})
   // const L2PublicResolver = L2PublicResolverFactory.attach(l2ResolverAddress);
   // const context = ethers.utils.arrayify('0xDBBC2C0FE2A1D0FB4056B35A22E543BEB715E7FC')
   // const node = ethers.utils.namehash(ENS_NAME);
@@ -61,61 +60,13 @@ function Record() {
   // console.log({result2});
 
 
-
+  console.log({addressData})
   if(addressData){
     return(<div style={{ marginTop: '1em' }}>
-      Address:{addressData}
+      CCIP Address:{addressData}
     </div>)
   }
-  // const EditRecord = currentUser?.resolver?.name === 'CCIP RESOLVER' ? (<div>Can edit</div>)
-
-  // const publicClient = usePublicClient();
-  // console.log({publicClient})
-  // const { data:textData } = useEnsText({
-  //   name:currentUser?.username || '',
-  //   key:'my-record',
-  //   enabled:!!(currentUser && currentUser.username),
-  //   chainId:5
-  // })
-  // console.log({textData})
-  // if(textData){
-  //   return(<div style={{ marginTop: '1em' }}>
-  //     twitter:{textData}
-  //   </div>)
-  // }
-  // const { data:resolverAddress, isError, isLoading } = useEnsResolver({
-  //   name: 'bedrock.l2-resolver.eth',
-  //   chainId: 5
-  // })
-  // const { data, error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({
-  //   address: resolverAddress,
-  //   abi,
-  //   functionName: 'metadata',
-  //   enabled:!!resolverAddress,
-  //   chainId: 5
-  // })
-
-  // console.log({resolverAddress, abi, data, contractIsError, error})
-  // if (isLoading) return <div>Fetching resolver…</div>
-  // if (isError) return <div>Error fetching resolver</div>
-  // if (contractIsLoading) return <div>Fetching resolver Contract</div>
-  // if (contractIsError) return <div>Error fetching resolver Contract</div>
-  // if(data){
-  //   // const [name, coinType, graphurl, storageType, contextId ] = data
-  //   console.log(data)
-  //   console.log({address, connector, isConnected, chain})
-  //   return <div>
-  //     Resolver: {JSON.stringify(resolverAddress)}
-  //     {/* Data: {JSON.stringify(data)} */}
-  //     <button onClick={() => connect({
-  //           chainId: 420,
-  //           connector: new InjectedConnector(),
-  //     })}>Connect Optimism Testnet</button>
-  //     {/* {
-  //       chain?.id === 420 && (<EditRecord ></EditRecord>)
-  //     } */}
-  //   </div>
-  // }
+  console.log('***Record111', {resolverName:currentUser?.resolver?.name, chainName:chain?.name })
   return(
     <div>
       ETH: {currentUser?.address}
