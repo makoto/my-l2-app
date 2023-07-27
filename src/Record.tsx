@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react'
 
-import { useEnsAddress, useContractRead, useConnect, useAccount, useNetwork, usePublicClient } from 'wagmi'
+import { useContractWrite, useContractRead, useConnect, useAccount, useNetwork, usePublicClient } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { PublicClient, Transport } from "viem";
 import { useEnsText } from './useEnsText'
@@ -10,11 +10,7 @@ import { abi as l2abi } from './L2PublicResolver'
 import CurrentUserContext from './Context'
 import { Button } from '@ensdomains/thorin'
 import {ethers} from 'ethers'
-
  
-// import { InjectedConnector } from 'wagmi/connectors/injected'
-
-
 function Record() {
   const currentUser = useContext(CurrentUserContext);
   const { chain } = useNetwork()
@@ -29,7 +25,6 @@ function Record() {
   })
 
   const l2resolverAddress='0x39dc8a3a607970fa9f417d284e958d4ca69296c8'
-  // const context = '0xDBBC2C0FE2A1D0FB4056B35A22E543BEB715E7FC'
   const context = address || ''
   const node = ethers.utils.namehash(currentUser?.username || '');
   const { data:l2AddrData, error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({
