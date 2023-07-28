@@ -102,7 +102,6 @@ function Search() {
     currentUser?.setUsername('')
   }
 
-  console.log({networkName})
   return (
     <div>
       <Input
