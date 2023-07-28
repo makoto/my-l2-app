@@ -74,7 +74,7 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
       verifierAddress = parsed.verifierAddress
       verifierNode = getVerifierOfDomainData[1]
     }
-    // if(currentUser?.resolver?.address){
+    if(currentUser?.resolver?.address){
       return (
         <div>
           <Card>
@@ -186,8 +186,8 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
           <EditRecord></EditRecord>
         </div>
       );
-    // }else{
-    //   return(<></>)
-    // }
+    }else{
+      return(<></>)
+    }
   };
   export default Resolver
