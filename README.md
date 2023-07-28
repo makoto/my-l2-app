@@ -17,3 +17,8 @@ yarn start
 ## Walkthrough video
 
 https://drive.google.com/file/d/1K2_1Tvs8JqrLzOFYCmnhNxfts_hF2zoE/view?usp=drive_link\
+
+## TODO
+
+- Fix the problem of not decoding metadata.coinType
+- Replace hard coded chainId to the one dynamically fetched from metadata

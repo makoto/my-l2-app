@@ -18,11 +18,6 @@ function Record() {
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   })
-  console.log({
-    username:currentUser?.username,
-    resolverName:currentUser?.resolver?.networkName,
-    IsResolverName:currentUser?.resolver?.networkName
-  })
 
   const l2resolverAddress='0x39dc8a3a607970fa9f417d284e958d4ca69296c8'
   const context = currentUser?.nameOwner || ''
@@ -35,7 +30,6 @@ function Record() {
     enabled:!!(currentUser?.username),
     chainId: 420
   })
-  console.log('***Record1', {l2AddrData, context, node, error})
   const isDataSync = l2AddrData === currentUser?.address
   return(
     <div>

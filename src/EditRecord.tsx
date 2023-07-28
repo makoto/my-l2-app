@@ -25,7 +25,6 @@ function EditRecord() {
     chainId: 420
   })
   const encodedName = utils.dnsEncode(currentUser?.username || '');
-  console.log('***EditRecord', {name:currentUser?.username, encodedName, data, input, isLoading, isSuccess}) 
   return (
     <div>
       <Input

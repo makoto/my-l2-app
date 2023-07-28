@@ -9,7 +9,6 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { utils } from 'ethers'
 import {abi as ENSAbi} from './ENS'
 import { abi as CCIPAbi } from './CcipResolver'
-console.log({ENSAbi, CCIPAbi})
 
 const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 
@@ -32,7 +31,6 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
     
     const node = utils.namehash(currentUser?.username || '');
     const name = utils.dnsEncode(currentUser?.username || '');
-    console.log('**Resolver', {currentUser, node, name, ENSAbi})
     const { isLoading:setResolverIsLoading, write } = useContractWrite({
       address: registryAddress,
       abi: ENSAbi,
@@ -55,9 +53,6 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
       enabled:!!(currentUser?.username),
       chainId: 5
     })
-    console.log({name, getVerifierOfDomainData, getVerifierOfDomainError, username:currentUser?.username})
-
-    console.log({chain, chains, currentUser, CCIPAbi})
     const isOwnedByUser = currentUser?.nameOwner === address
     const cannotSetResolver = chain?.id !== 5 || setResolverIsLoading || !isOwnedByUser
     const cannotSetVerifier = chain?.id !== 5 || setVerifierContractIsLoading || !isOwnedByUser
@@ -119,7 +114,6 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
                 {
                   label: 'Default Resolver',
                   onClick: () => {
-                    console.log('***Clicked', {name: currentUser?.username, node, defaultResolverAddress})
                     write({args:[node, defaultResolverAddress]})
                   },  
                   color: 'text'
@@ -127,7 +121,6 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
                 {
                   label: 'Bedrock Ccip Resolver',
                   onClick: () => {
-                    console.log('***Clicked', {name: currentUser?.username, node, bedrockResolverAddress})
                     write({args:[node, bedrockResolverAddress]})
                   },  
                   color: 'red'
@@ -149,7 +142,6 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
             <Button
               disabled={cannotSetVerifier}
               style={{width:'150px'}} onClick={ () => {
-              console.log('***', {node, L2_PUBLIC_RESOLVER_VERIFIER, URL})
               setVerifierWrite({
                 args:[node, L2_PUBLIC_RESOLVER_VERIFIER, [URL]]
               })
@@ -177,7 +169,7 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
                 blockExplorerUrls: ["https://goerli-optimism.etherscan.io/"]
               }]
             }).catch((error:any)=>{
-              console.log({error})
+              console.log('*** Add network error', {error})
             });
           }}
           >Switch to Op Goerli Network</Button>

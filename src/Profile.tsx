@@ -15,11 +15,7 @@ function Profile() {
     connector: new InjectedConnector(),
   })
   const { disconnect } = useDisconnect()
-  const { chain, chains } = getNetwork()
-  
-  const { isSuccess } = useSwitchNetwork()
-  console.log('Profile', {connector, chain, isConnected, isSuccess})
-
+  const { chain } = getNetwork()
   function getColor(name?:string){
     if(name?.match(/Optimism/)){
       return 'redSecondary'

@@ -39,7 +39,7 @@ function Search() {
   try{
     encodedName = dnsEncode(name)
   }catch(e){
-    console.log('***search1',{e})
+    console.log('***search error',{e})
   }
   const { data , error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({
     address: resolverAddress,
@@ -49,7 +49,6 @@ function Search() {
     enabled:!!encodedName && !!resolverAddress,
     chainId: GOERLI_CHAINID
   })
-  console.log('***search2', {name, encodedName, resolverAddress, error})
   useEthers(currentUser?.username)
   const { loading:queryLoading, error:queryError, data:queryData } = useQuery(GET_NAME, {
     variables: { name: currentUser?.username },
@@ -61,7 +60,6 @@ function Search() {
     return id && utils.getAddress(id)
   }
   const nameOwner = extractOwner(domain)
-  console.log('***search3', {resolverAddress, name, queryLoading, nameOwner, queryData})
   const isArray = (val: unknown): val is number[] => (
     Array.isArray(val)
   );
@@ -72,7 +70,6 @@ function Search() {
     graphqlUrl = data[2]
     storageType = data[3]
     encodedData = data[4]
-    console.log('***metadata2', {coinType})
   }
   useEffect(() => {
     if(resolverAddress){

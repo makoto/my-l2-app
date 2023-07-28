@@ -48,9 +48,6 @@ import type {
     chainId,
   }: FetchEnsTextArgs): Promise<FetchEnsTextResult> {
     const publicClient = getPublicClient({ chainId })
-    console.log('***getEnsText', {
-      chainId, name, key
-    })
     return publicClient.getEnsText({
       name,
       key,
