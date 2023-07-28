@@ -23,5 +23,6 @@ https://drive.google.com/file/d/1K2_1Tvs8JqrLzOFYCmnhNxfts_hF2zoE/view?usp=drive
 - Fix the problem of not decoding metadata.coinType
 - Replace hard coded chainId to the one dynamically fetched from metadata
 - Tidy up code
+- Add custom argument to verifier so that users can set their own graphql endpoint
 - Call l2 graphql to show custom record (multichain and text record)
 - Call l2 graphql to show subnames
