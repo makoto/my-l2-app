@@ -35,6 +35,7 @@ function Record() {
     enabled:!!(currentUser?.username),
     chainId: 420
   })
+  console.log('***Record1', {l2AddrData, context, node, error})
   const isDataSync = l2AddrData === currentUser?.address
   return(
     <div>
@@ -47,9 +48,9 @@ function Record() {
           ETH Address for {context.slice(0,5)}... on OP: { JSON.stringify(l2AddrData) }
         </li>
         {isDataSync ? (
-          <li style={{color:"green"}}>L1 data and l2 is in sync</li>
+          <li style={{color:"green"}}>L1 data and l2 are in sync</li>
         ) : (
-          <li style={{color:"orange"}}>L1 data and l2 is out of sync</li>
+          <li style={{color:"orange"}}>L1 data and l2 are out of sync</li>
         )}
       </ul>
     </div>

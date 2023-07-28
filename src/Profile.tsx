@@ -40,7 +40,8 @@ function Profile() {
             </div>
           </div>
           <div>
-            {/* <Balance></Balance> */}
+            <Balance chainId={5} ></Balance>
+            <Balance chainId={420} ></Balance>
             <Search />
             <Resolver />
           </div>
