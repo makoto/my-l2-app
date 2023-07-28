@@ -1,20 +1,14 @@
-import React, { useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import CurrentUserContext from './Context'
-import { useEnsResolver, useContractRead, useConnect, useAccount, useNetwork, useContractWrite } from 'wagmi'
-import { InjectedConnector } from 'wagmi/connectors/injected'
-// import { getNetwork } from '@wagmi/core'
-import { abi } from './CcipResolver'
+import { useAccount, useContractWrite } from 'wagmi'
 import { Input,  Button, Spinner } from '@ensdomains/thorin'
 import { abi as l2abi } from './L2PublicResolver'
 import { utils } from 'ethers'
 import { getNetwork } from '@wagmi/core'
-
-// import { InjectedConnector } from 'wagmi/connectors/injected'
  
 function EditRecord() {
   const { chain } = getNetwork()
   const [input, setInput] = useState('')
-  const { address, connector, isConnected } = useAccount()
   const currentUser = useContext(CurrentUserContext);
   const l2resolverAddress='0x39dc8a3a607970fa9f417d284e958d4ca69296c8'
   const cannotEditL2Record = chain?.id !== 420

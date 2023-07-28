@@ -1,7 +1,4 @@
 import React, { useState, useEffect, createContext } from 'react';
-// interface CurrentUserContextType {
-//   username: string;
-// }
 interface ResolverType {
     address?: string
     networkName?: string,
@@ -21,7 +18,6 @@ interface CurrentUserContextType {
     setResolver: (address: any) => void
     setAddress: (address: any) => void
     setNameOwner: (address: any) => void
-    // handleTwitter: () => void
 }
   
   

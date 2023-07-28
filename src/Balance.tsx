@@ -1,9 +1,5 @@
 import { useAccount, useBalance, useConnect, useDisconnect, useNetwork } from 'wagmi'
-// import { getNetwork } from '@wagmi/core'
 
-
-// import { InjectedConnector } from 'wagmi/connectors/injected'
- 
 function Balance(props:any) {
   const { address} = useAccount()
   const { data, isError, isLoading } = useBalance({

@@ -4,7 +4,6 @@ import { Input,  Button } from '@ensdomains/thorin'
 import { gql, useQuery } from '@apollo/client';
 import { utils } from 'ethers'
 import CurrentUserContext from './Context'
-// import CcipResolver from './CcipResolver.json'
 import {abi} from './CcipResolver'
 import useEthers from './useEthers';
 import { dnsEncode } from "ethers/lib/utils";
