@@ -14,7 +14,7 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 
   const Resolver = () => {
     const URL = "http://localhost:8081/{sender}/{data}"
-    const L2_PUBLIC_RESOLVER_VERIFIER = "0x67AfD6d796d9212541016A2D10b28CC55021Cade"
+    const L2_PUBLIC_RESOLVER_VERIFIER = "0x183C1F81D0159794973c157694627a689DEB9F72"
     const defaultResolverAddress = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
     const bedrockResolverAddress = '0x49e0AeC78ec0dF50852E99116E524a43bE91B789'
     
