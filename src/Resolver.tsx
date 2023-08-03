@@ -16,7 +16,7 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
     const URL = "http://localhost:8081/{sender}/{data}"
     const L2_PUBLIC_RESOLVER_VERIFIER = "0x183C1F81D0159794973c157694627a689DEB9F72"
     const defaultResolverAddress = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
-    const bedrockResolverAddress = '0x49e0AeC78ec0dF50852E99116E524a43bE91B789'
+    const bedrockResolverAddress = '0x5e0F81D5ca51D309B3A046FAeea70C4C70Df8079'
     
     const currentUser = useContext(CurrentUserContext);
     const { connect } = useConnect({
@@ -70,6 +70,7 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
       verifierNode = getVerifierOfDomainData[1]
     }
     if(currentUser?.resolver?.address){
+      console.log({resolver:currentUser?.resolver})
       return (
         <div>
           <Card>
@@ -97,7 +98,10 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
                   storageType:{currentUser?.resolver.storageType}
                 </li>
                 <li>
-                  encodedData:{currentUser?.resolver.encodedData}
+                  storageLocation:{currentUser?.resolver.storageLocation}
+                </li>
+                <li>
+                  context:{currentUser?.resolver.context}
                 </li>
               </ul>
               </div>              
@@ -174,7 +178,6 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
           }}
           >Switch to Op Goerli Network</Button>
           <h3 style={{margin:'1em 0'}}>Step 4: Update Record on L2</h3>
-
           <EditRecord></EditRecord>
         </div>
       );

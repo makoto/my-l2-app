@@ -62,13 +62,26 @@ function Search() {
   const isArray = (val: unknown): val is number[] => (
     Array.isArray(val)
   );
-  let networkName: any, coinType: any, graphqlUrl: any, storageType: any, encodedData:any
+  let networkName: any, coinType: any, graphqlUrl: any
+  let storageType: any, storageLocation: any, context:any
   if (isArray(data)) {
+
     networkName = data[0]
     coinType = data[1]
     graphqlUrl = data[2]
     storageType = data[3]
-    encodedData = data[4]
+    // todo: the order of context and storageLocation is reverse
+    context = data[4]
+    storageLocation = data[5]
+    console.log({
+      data,
+      networkName,
+      coinType,
+      graphqlUrl,
+      storageType,
+      storageLocation,
+      context
+    })
   }
   useEffect(() => {
     if(resolverAddress){
@@ -78,7 +91,8 @@ function Search() {
         coinType,
         graphqlUrl,
         storageType,
-        encodedData
+        storageLocation,
+        context
       })
     }    
   }, [resolverAddress, networkName]);

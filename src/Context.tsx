@@ -5,7 +5,8 @@ interface ResolverType {
     coinType?: any
     graphqlUrl?: any
     storageType?: any
-    encodedData?: any
+    storageLocation?: any
+    context?: any
     nameOwner?: string
 }
 

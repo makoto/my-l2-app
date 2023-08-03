@@ -19,8 +19,8 @@ function Record() {
     connector: new InjectedConnector(),
   })
 
-  const l2resolverAddress='0x39dc8a3a607970fa9f417d284e958d4ca69296c8'
-  const context = currentUser?.nameOwner || ''
+  const l2resolverAddress=currentUser?.resolver?.storageLocation
+  const context = currentUser?.resolver?.context || ''
   const node = ethers.utils.namehash(currentUser?.username || '');
   const { data:l2AddrData, error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({
     address: l2resolverAddress,
