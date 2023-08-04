@@ -2,6 +2,7 @@ import { useState, useContext } from 'react'
 
 import { useContractWrite, useContractRead, useConnect, useAccount, useNetwork, usePublicClient } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
+import { gql, useQuery } from '@apollo/client';
 import { PublicClient, Transport } from "viem";
 import { useEnsText } from './useEnsText'
 import { getNetwork } from '@wagmi/core'
@@ -10,15 +11,47 @@ import { abi as l2abi } from './L2PublicResolver'
 import CurrentUserContext from './Context'
 import { Button } from '@ensdomains/thorin'
 import {ethers} from 'ethers'
- 
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import useEthersText from './useEthersText'
+
+// TODO: This should be set dynamically based on URL passed from metadata endpoint
+const l2client = new ApolloClient({
+  cache: new InMemoryCache(),
+  uri: "https://api.thegraph.com/subgraphs/id/QmNsi5HQiV9aTBMAHHzRE2wtmnpwYZibenETQbS4dtSjKx"
+});
+const GET_NAME = gql`
+  query GetDomains($name: String!) {
+    domains(where:{name:$name}) {
+      id
+      name
+      labelName
+      labelhash
+      resolver{
+        texts
+        coinTypes
+      }
+    }
+  }
+`;
+
 function Record() {
   const currentUser = useContext(CurrentUserContext);
+  const { loading:queryLoading, error:queryError, data:queryData } = useQuery(GET_NAME, {
+    client: l2client,
+    variables: { name: currentUser?.username },
+    skip:(!currentUser?.username)
+  });
+  const domain = queryData?.domains[0]
+  const coinTypes = domain?.resolver?.coinTypes || []
+  const texts = domain?.resolver?.texts || []
+  console.log('***Record', domain?.resolver?.texts, domain?.resolver?.coinTypes)
   const { chain } = useNetwork()
   const { address, connector, isConnected } = useAccount()
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   })
-
+  const textRecords = useEthersText(currentUser?.username, texts)
+  console.log({textRecords})
   const l2resolverAddress=currentUser?.resolver?.storageLocation
   const context = currentUser?.resolver?.context || ''
   const node = ethers.utils.namehash(currentUser?.username || '');
@@ -46,6 +79,16 @@ function Record() {
         ) : (
           <li style={{color:"orange"}}>L1 data and l2 are out of sync</li>
         )}
+      </ul>
+      <h3>Text Record</h3>
+      <ul>
+      {
+        textRecords.map(({key, val})=> {
+          return (<li>
+            {key}:{val}
+          </li>)
+        })
+      }
       </ul>
     </div>
   )

@@ -70,9 +70,8 @@ function Search() {
     coinType = data[1]
     graphqlUrl = data[2]
     storageType = data[3]
-    // todo: the order of context and storageLocation is reverse
-    context = data[4]
-    storageLocation = data[5]
+    storageLocation = data[4]
+    context = data[5]
     console.log({
       data,
       networkName,

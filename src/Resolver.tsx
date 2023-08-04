@@ -16,7 +16,7 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
     const URL = "http://localhost:8081/{sender}/{data}"
     const L2_PUBLIC_RESOLVER_VERIFIER = "0x183C1F81D0159794973c157694627a689DEB9F72"
     const defaultResolverAddress = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
-    const bedrockResolverAddress = '0x5e0F81D5ca51D309B3A046FAeea70C4C70Df8079'
+    const bedrockResolverAddress = '0xaeB973dA621Ed58F0D8bfD6299031E8a2Ac39FD4'
     
     const currentUser = useContext(CurrentUserContext);
     const { connect } = useConnect({
