@@ -21,6 +21,8 @@ function EditRecord() {
   const [inputEth, setInputEth] = useState('')
   const [inputKey, setInputKey] = useState('')
   const [inputVal, setInputVal] = useState('')
+  const [inputContenthash, setInputContenthash] = useState('')
+  
   const currentUser = useContext(CurrentUserContext);
   const l2resolverAddress=currentUser?.resolver?.storageLocation
   const cannotEditL2Record = chain?.id !== 420
@@ -34,6 +36,12 @@ function EditRecord() {
     address: l2resolverAddress,
     abi: l2abi,
     functionName: 'setText',
+    chainId: 420
+  })
+  const { data:contenthashData, isLoading:contenthashIsLoading, isSuccess:contenthashIsSuccess, write:writeContenthash } = useContractWrite({
+    address: l2resolverAddress,
+    abi: l2abi,
+    functionName: 'setContenthash',
     chainId: 420
   })
 
@@ -126,6 +134,27 @@ function EditRecord() {
           {ethData.hash}
         </a>
       </div>) : '' }
+
+      <div style={{display:"flex"}}>
+        <Input
+          width="72"
+          label="New Contenthash"
+          placeholder=""
+          onChange={(evt) => setInputContenthash(evt.target.value) }
+        />
+      </div>
+      <Button
+        disabled={cannotEditL2Record}
+        style={{width:'100px'}}
+        onClick={() => writeContenthash({args:[encodedName, inputContenthash]})}
+      >{contenthashIsLoading ? (<Spinner></Spinner>): (<div>Update</div>)}</Button>
+      {contenthashData? (<div>
+        <a style={{color:"blue"}}
+          target="_blank" href={`https://goerli-optimism.etherscan.io/tx/${contenthashData.hash}`}>
+          {contenthashData.hash}
+        </a>
+      </div>) : '' }
+
       <div style={{display:"flex"}}>
         <Input
           width="48"

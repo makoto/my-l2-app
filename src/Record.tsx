@@ -13,6 +13,8 @@ import { Button } from '@ensdomains/thorin'
 import {ethers} from 'ethers'
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import useEthersText from './useEthersText'
+import useEthersAddr from './useEthersAddr'
+import useEthersContenthash from './useEthersContenthash'
 
 // TODO: This should be set dynamically based on URL passed from metadata endpoint
 const l2client = new ApolloClient({
@@ -51,7 +53,10 @@ function Record() {
     connector: new InjectedConnector(),
   })
   const textRecords = useEthersText(currentUser?.username, texts)
-  console.log({textRecords})
+  const addrRecords = useEthersText(currentUser?.username, coinTypes)
+  const contentRecords = useEthersContenthash(currentUser?.username, coinTypes)
+  
+  console.log({textRecords, addrRecords, contentRecords})
   const l2resolverAddress=currentUser?.resolver?.storageLocation
   const context = currentUser?.resolver?.context || ''
   const node = ethers.utils.namehash(currentUser?.username || '');
@@ -89,6 +94,12 @@ function Record() {
           </li>)
         })
       }
+      <h3>Contenthash</h3>
+      {contentRecords && (
+        <div>
+          {contentRecords}
+        </div>
+      )}
       </ul>
     </div>
   )
