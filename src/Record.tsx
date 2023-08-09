@@ -46,7 +46,6 @@ function Record() {
   const domain = queryData?.domains[0]
   const coinTypes = domain?.resolver?.coinTypes || []
   const texts = domain?.resolver?.texts || []
-  console.log('***Record', domain?.resolver?.texts, domain?.resolver?.coinTypes)
   const { chain } = useNetwork()
   const { address, connector, isConnected } = useAccount()
   const { connect } = useConnect({
@@ -56,7 +55,7 @@ function Record() {
   const addrRecords = useEthersText(currentUser?.username, coinTypes)
   const contentRecords = useEthersContenthash(currentUser?.username, coinTypes)
   
-  console.log({textRecords, addrRecords, contentRecords})
+  console.log({username: currentUser?.username, texts, textRecords})
   const l2resolverAddress=currentUser?.resolver?.storageLocation
   const context = currentUser?.resolver?.context || ''
   const node = ethers.utils.namehash(currentUser?.username || '');

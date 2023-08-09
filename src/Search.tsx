@@ -72,15 +72,6 @@ function Search() {
     storageType = data[3]
     storageLocation = data[4]
     context = data[5]
-    console.log({
-      data,
-      networkName,
-      coinType,
-      graphqlUrl,
-      storageType,
-      storageLocation,
-      context
-    })
   }
   useEffect(() => {
     if(resolverAddress){
@@ -118,7 +109,7 @@ function Search() {
     <div>
       <Input
         label="Search Name"
-        placeholder="vitalik.eth"
+        placeholder="alice123.eth"
         onChange={handleChange}
       />
       <div style={{display:'flex'}}>

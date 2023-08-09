@@ -70,7 +70,6 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
       verifierNode = getVerifierOfDomainData[1]
     }
     if(currentUser?.resolver?.address){
-      console.log({resolver:currentUser?.resolver})
       return (
         <div>
           <Card>
