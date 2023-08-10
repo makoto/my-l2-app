@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import CurrentUserContext from './Context'
-import { Heading, Card,  Button, Input, Dropdown, Spinner } from '@ensdomains/thorin'
+import { Heading, Card,  Button, Input, Dropdown, Spinner, Tag } from '@ensdomains/thorin'
 import EditRecord from './EditRecord'
 import Record from './Record'
 import { useAccount, useContractWrite, useContractRead, useSwitchNetwork, useConnect, useDisconnect } from 'wagmi'
@@ -85,27 +85,35 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
             </ul>            
             { currentUser?.resolver?.networkName && (
               <div>
-              <h5>Metadata</h5>
-              <ul>
-                <li>
-                  Network Name: {currentUser?.resolver.networkName}
-                </li>
-                <li>
-                  Coin Type: {currentUser?.resolver.coinType}
-                </li>
-                <li>
-                  Graphql Url:{currentUser?.resolver.graphqlUrl}
-                </li>
-                <li>
-                  Storage Type:{currentUser?.resolver.storageType}
-                </li>
-                <li>
-                  Storage Location:{currentUser?.resolver.storageLocation}
-                </li>
-                <li>
-                  Context:{currentUser?.resolver.context}
-                </li>
-              </ul>
+                <div style={{display:'flex'}}>
+                  <h5>Metadata
+                  </h5>
+                  <a
+                    href="https://github.com/ensdomains/docs/blob/95983d0d02bf4cbab7644871749c5f669d1392cf/ens-improvement-proposals/ensip-15-ccip-read-metadata.md#specification"
+                    target="_blank"
+
+                  >(More info)</a>
+                </div>
+                <ul>
+                  <li>
+                    Network Name: {currentUser?.resolver.networkName}
+                  </li>
+                  <li>
+                    Coin Type: {currentUser?.resolver.coinType}
+                  </li>
+                  <li>
+                    Graphql Url:{currentUser?.resolver.graphqlUrl}
+                  </li>
+                  <li>
+                    Storage Type:{currentUser?.resolver.storageType}
+                  </li>
+                  <li>
+                    Storage Location:{currentUser?.resolver.storageLocation}
+                  </li>
+                  <li>
+                    Context:{currentUser?.resolver.context}
+                  </li>
+                </ul>
               </div>              
             )}
             <Record></Record>
@@ -135,7 +143,14 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
               label="Select Resolver"
             />
             )}
+            <div style={{display:'flex'}}>
             <h3>Step 2: Set verifier</h3>
+            <a
+            href="https://github.com/corpus-io/ENS-Bedrock-Resolver#l2publicresolververifier-l1"
+            target="_blank"
+            >(More info)</a>
+
+            </div>
             {getVerifierOfDomainData ? (
               <Card>
                 <ul>
@@ -146,12 +161,12 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
               </Card>
             ): ''}
             <Input
-              label="Set Verifier address"
+              label="Verifier address"
               defaultValue={newVerifierAddress}
               onChange={(e)=>{setNewVerifierAddress(e.target.value)}}
             ></Input>
             <Input
-              label="Set Verifier url"
+              label="Verifier url"
               defaultValue={url}
               onChange={(e)=>{setUrl(e.target.value)}}
             ></Input>
