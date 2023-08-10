@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import CurrentUserContext from './Context'
-import { Heading, Card,  Button, Field, Dropdown, Spinner } from '@ensdomains/thorin'
+import { Heading, Card,  Button, Input, Dropdown, Spinner } from '@ensdomains/thorin'
 import EditRecord from './EditRecord'
 import Record from './Record'
 import { useAccount, useContractWrite, useContractRead, useSwitchNetwork, useConnect, useDisconnect } from 'wagmi'
@@ -13,8 +13,11 @@ import { abi as CCIPAbi } from './CcipResolver'
 const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 
   const Resolver = () => {
-    const URL = "http://localhost:8081/{sender}/{data}"
+    const BASE_URL = "https://ccip-resolver-y3ur7hmkna-uc.a.run.app"
     const L2_PUBLIC_RESOLVER_VERIFIER = "0x183C1F81D0159794973c157694627a689DEB9F72"
+    const [url, setUrl] = useState(`${BASE_URL}/{sender}/{data}`)
+    const [newVerifierAddress, setNewVerifierAddress] = useState(L2_PUBLIC_RESOLVER_VERIFIER)
+  
     const defaultResolverAddress = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
     const bedrockResolverAddress = '0xaeB973dA621Ed58F0D8bfD6299031E8a2Ac39FD4'
     
@@ -142,11 +145,21 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
                 </ul>
               </Card>
             ): ''}
+            <Input
+              label="Set Verifier address"
+              defaultValue={newVerifierAddress}
+              onChange={(e)=>{setNewVerifierAddress(e.target.value)}}
+            ></Input>
+            <Input
+              label="Set Verifier url"
+              defaultValue={url}
+              onChange={(e)=>{setUrl(e.target.value)}}
+            ></Input>
             <Button
               disabled={cannotSetVerifier}
               style={{width:'150px'}} onClick={ () => {
               setVerifierWrite({
-                args:[node, L2_PUBLIC_RESOLVER_VERIFIER, [URL]]
+                args:[node, newVerifierAddress, [url]]
               })
             }}  >
               {setVerifierContractIsLoading ? (<Spinner></Spinner>) : ('Set Verifier')}
