@@ -79,31 +79,31 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
             <h5>{currentUser?.username}</h5>
             <ul>
               <li>Owned by {currentUser?.nameOwner}.</li>
-              <li>The current resolver is {currentUser?.resolver?.address}.</li>
-              <li>node: {node}</li>
-              <li>encoded name: {name}</li>
+              <li>Node: {node}</li>
+              <li>Encoded name: {name}</li>
+              <li>Resolver is {currentUser?.resolver?.address}.</li>
             </ul>            
             { currentUser?.resolver?.networkName && (
               <div>
               <h5>Metadata</h5>
               <ul>
                 <li>
-                  networkName: {currentUser?.resolver.networkName}
+                  Network Name: {currentUser?.resolver.networkName}
                 </li>
                 <li>
-                  coinType: {currentUser?.resolver.coinType}
+                  Coin Type: {currentUser?.resolver.coinType}
                 </li>
                 <li>
-                  graphqlUrl:{currentUser?.resolver.graphqlUrl}
+                  Graphql Url:{currentUser?.resolver.graphqlUrl}
                 </li>
                 <li>
-                  storageType:{currentUser?.resolver.storageType}
+                  Storage Type:{currentUser?.resolver.storageType}
                 </li>
                 <li>
-                  storageLocation:{currentUser?.resolver.storageLocation}
+                  Storage Location:{currentUser?.resolver.storageLocation}
                 </li>
                 <li>
-                  context:{currentUser?.resolver.context}
+                  Context:{currentUser?.resolver.context}
                 </li>
               </ul>
               </div>              
