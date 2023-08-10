@@ -39,6 +39,7 @@ export default function useEthersText(name:string | null | undefined, keys:strin
           setData(r)
           return d
         })
+        .catch(e => {console.log('*** useEthersText error', e)})
       })
     } 
   }, [name, keys]);

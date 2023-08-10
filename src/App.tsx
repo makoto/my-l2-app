@@ -44,7 +44,6 @@ const App = () => {
         <CurrentUserContext.Provider value={{
           username, setUsername,
           resolver, setResolver,
-          address, setAddress,
           nameOwner, setNameOwner
         }}>
           <Profile></Profile>

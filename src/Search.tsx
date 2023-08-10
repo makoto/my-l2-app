@@ -5,7 +5,6 @@ import { gql, useQuery } from '@apollo/client';
 import { utils } from 'ethers'
 import CurrentUserContext from './Context'
 import {abi} from './CcipResolver'
-import useEthers from './useEthers';
 import { dnsEncode } from "ethers/lib/utils";
 const GOERLI_CHAINID = 5
 const GET_NAME = gql`
@@ -48,7 +47,6 @@ function Search() {
     enabled:!!encodedName && !!resolverAddress,
     chainId: GOERLI_CHAINID
   })
-  useEthers(currentUser?.username)
   const { loading:queryLoading, error:queryError, data:queryData } = useQuery(GET_NAME, {
     variables: { name: currentUser?.username },
     skip:(!currentUser?.username)
@@ -100,7 +98,6 @@ function Search() {
   }
   function clearName() {
     currentUser?.setResolver({})
-    currentUser?.setAddress(null)
     currentUser?.setNameOwner(null)
     currentUser?.setUsername('')
   }

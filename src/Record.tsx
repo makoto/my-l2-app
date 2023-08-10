@@ -13,6 +13,7 @@ import { Button } from '@ensdomains/thorin'
 import {ethers} from 'ethers'
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import useEthersText from './useEthersText'
+import useEthers from './useEthers';
 import useEthersAddr from './useEthersAddr'
 import useEthersContenthash from './useEthersContenthash'
 
@@ -47,14 +48,15 @@ function Record() {
   const coinTypes = domain?.resolver?.coinTypes || []
   const texts = domain?.resolver?.texts || []
   const { chain } = useNetwork()
-  const { address, connector, isConnected } = useAccount()
+  const { connector, isConnected } = useAccount()
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   })
   const textRecords = useEthersText(currentUser?.username, texts)
   const addrRecords = useEthersText(currentUser?.username, coinTypes)
   const contentRecords = useEthersContenthash(currentUser?.username, coinTypes)
-  
+  const address = useEthers(currentUser?.username)
+
   console.log({username: currentUser?.username, texts, textRecords})
   const l2resolverAddress=currentUser?.resolver?.storageLocation
   const context = currentUser?.resolver?.context || ''
@@ -67,13 +69,13 @@ function Record() {
     enabled:!!(currentUser?.username),
     chainId: 420
   })
-  const isDataSync = l2AddrData === currentUser?.address
+  const isDataSync = l2AddrData === address
   return(
     <div>
       <h3>Record</h3>
       <ul>
         <li>
-          ETH Address on Goerli via CCIP-read: {currentUser?.address}
+          ETH Address on Goerli via CCIP-read: {address}
         </li>
         <li>
           ETH Address for {context.slice(0,5)}... on OP: { JSON.stringify(l2AddrData) }

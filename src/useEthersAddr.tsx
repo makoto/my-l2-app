@@ -39,6 +39,7 @@ export default function useEthersAddr(name:string | null | undefined, coinTypes:
           setData(r)
           return d
         })
+        .catch(e => {console.log('*** useEthersAddr error', e)})
       })
     } 
   }, [name, coinTypes]);

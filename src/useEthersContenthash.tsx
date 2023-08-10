@@ -15,6 +15,7 @@ export default function useEthersContenthash(name:string | null | undefined, coi
           r?.getContentHash().then(a => {
             setData(a)
           })
+          .catch(e => {console.log('*** useEthersContenthash error', e)})
       })
     } 
   }, [name]);
