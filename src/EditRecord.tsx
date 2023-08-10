@@ -57,35 +57,36 @@ function EditRecord() {
       or <a href="https://github.com/satoshilabs/slips/blob/master/slip-0044.md" target="_blank" >
         Coin type
       </a> for non EVM chains
-
-      <Dropdown
-        align="left"
-        items={[
-          {
-            label: 'ETH',
-            onClick: () => {
-              setCoinType('60')
-              setInputType('ETH')
-            },
-            color: 'text'
-          },
-          {
-            label: 'CoinType',
-            onClick: () => {
-              setCoinType('')
-              setInputType('CoinType')
-            },
-          },
-          {
-            label: 'ChainID',
-            onClick: () => {
-              setCoinType('')
-              setInputType('ChainID')
-            },
-          },
-        ]}
-        label="Address Type"
-      />
+      {cannotEditL2Record ? (<Button disabled={true} style={{width:'200px'}} >Address Type</Button>) : (
+              <Dropdown
+              align="left"
+              items={[
+                {
+                  label: 'ETH',
+                  onClick: () => {
+                    setCoinType('60')
+                    setInputType('ETH')
+                  },
+                  color: 'text'
+                },
+                {
+                  label: 'CoinType',
+                  onClick: () => {
+                    setCoinType('')
+                    setInputType('CoinType')
+                  },
+                },
+                {
+                  label: 'ChainID',
+                  onClick: () => {
+                    setCoinType('')
+                    setInputType('ChainID')
+                  },
+                },
+              ]}
+              label="Address Type"
+            />      
+      )}
       {
         inputType === 'CoinType' && (
           <Input

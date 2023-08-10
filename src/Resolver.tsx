@@ -57,9 +57,10 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
       chainId: 5
     })
     const isOwnedByUser = currentUser?.nameOwner === address
+    const isBedrockResolver = currentUser?.resolver?.address === bedrockResolverAddress
     const cannotSetResolver = chain?.id !== 5 || setResolverIsLoading || !isOwnedByUser
-    const cannotSetVerifier = chain?.id !== 5 || setVerifierContractIsLoading || !isOwnedByUser
-    const cannotSwitchToOp  = chain?.id !== 5 || !isOwnedByUser
+    const cannotSetVerifier = chain?.id !== 5 || setVerifierContractIsLoading || !isOwnedByUser || !isBedrockResolver
+    const cannotSwitchToOp  = chain?.id !== 5 || !isOwnedByUser || !isBedrockResolver
     const isArray = (val: unknown): val is number[] => (
       Array.isArray(val)
     );
