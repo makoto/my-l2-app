@@ -5,6 +5,8 @@ import { Dropdown, Input,  Button, Spinner } from '@ensdomains/thorin'
 import { abi as l2abi } from './L2PublicResolver'
 import { utils } from 'ethers'
 import { getNetwork } from '@wagmi/core'
+import { decode, encode } from "@ensdomains/content-hash";
+
 export const SLIP44_MSB = 0x80000000
 export const convertEVMChainIdToCoinType = (chainId: number) =>{
   if( chainId >= SLIP44_MSB ){
@@ -46,6 +48,8 @@ function EditRecord() {
   })
 
   const encodedName = utils.dnsEncode(currentUser?.username || '');
+  // const encodedContenthash = encode(encodedName)
+  // console.log({inputContenthash, encodedContenthash})
   return (
     <div>
       Select ETH, 
