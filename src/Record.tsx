@@ -20,7 +20,7 @@ import useEthersContenthash from './useEthersContenthash'
 // TODO: This should be set dynamically based on URL passed from metadata endpoint
 const l2client = new ApolloClient({
   cache: new InMemoryCache(),
-  uri: "https://api.thegraph.com/subgraphs/id/QmNsi5HQiV9aTBMAHHzRE2wtmnpwYZibenETQbS4dtSjKx"
+  uri: "https://api.thegraph.com/subgraphs/name/makoto/ens-l2-subgraph-makototest1"
 });
 const GET_NAME = gql`
   query GetDomains($name: String!) {
