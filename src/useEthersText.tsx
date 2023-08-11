@@ -22,7 +22,7 @@ export default function useEthersText(name:string | null | undefined, keys:strin
           return new Promise(resolve => {
             r?.getText(key).then(a => {
               resolve(a)
-            })
+            }).catch(e => {console.log('*** useEthersText error', e)})
           })
         })
         Promise.all(promises)
@@ -39,7 +39,7 @@ export default function useEthersText(name:string | null | undefined, keys:strin
           setData(r)
           return d
         })
-        .catch(e => {console.log('*** useEthersText error', e)})
+        
       })
     } 
   }, [name, keys]);

@@ -22,7 +22,7 @@ export default function useEthersAddr(name:string | null | undefined, coinTypes:
           return new Promise(resolve => {
             r?.getAddress(coinType).then(a => {
               resolve(a)
-            })
+            }).catch(e => {console.log('*** useEthersAddr error', e)})
           })
         })
         Promise.all(promises)
@@ -39,7 +39,6 @@ export default function useEthersAddr(name:string | null | undefined, coinTypes:
           setData(r)
           return d
         })
-        .catch(e => {console.log('*** useEthersAddr error', e)})
       })
     } 
   }, [name, coinTypes]);
