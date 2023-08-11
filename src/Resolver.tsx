@@ -85,7 +85,15 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
       return (
         <div>
           <Card>
-            <h5>{currentUser?.username} (<a href="#" onClick={()=>{
+            <h5>
+            <span style={{marginRight:'5px'}}>
+            {isOwnedByUser ? (
+              <Tag style={{ display: 'inline'  }} colorStyle="greenSecondary">owner</Tag>
+            ) : (
+              <Tag style={{ display: 'inline'}} colorStyle="redSecondary">not owner</Tag>
+            )}
+            </span>
+              {currentUser?.username} (<a href="#" onClick={()=>{
               setToggle(!toggle)
             }}>{toggle ? ('Less') : ('More')}</a>)</h5>
             <ul>
@@ -97,7 +105,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
               )}
               <li>Owned by {currentUser?.nameOwner}.</li>
               <li>Resolver is {currentUser?.resolver?.address}.</li>
-            </ul>            
+            </ul>
             { currentUser?.resolver?.networkName && (
               <div>
                 <div style={{display:'flex'}}>
@@ -135,21 +143,6 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
           </Card>
           <div>
             <Heading> How to setup up Record on L2</Heading>
-            {!isOwnedByUser && (
-              <div>
-                <Tag colorStyle="redSecondary">You cannot set resolver because you do not own the name</Tag>
-              </div>
-            )}
-            {chain?.id !== 5 && (
-              <div>
-                <Tag colorStyle="redSecondary">You cannot set resolver because you are not connected to Goerli</Tag>
-              </div>
-            )}
-            {(setResolverIsLoading || setWrapperResolverIsLoading) && (
-              <div>
-                <Tag colorStyle="redSecondary">You cannot set resolver while loading resolver</Tag>
-              </div>
-            )}
             <h3>Step 1: Change Resolver to Bedrock CCIP Resolver</h3>
             {cannotSetResolver? (<Button disabled={true} style={{width:'200px'}} >Select Resolver</Button>) : (
             <Dropdown
