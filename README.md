@@ -1,4 +1,4 @@
-# L2 Resolver demo
+# ERC 3668 L2 Resolver demo
 
 ## Pre-requisite
 
@@ -16,13 +16,16 @@ yarn start
 
 ## Walkthrough video
 
-https://drive.google.com/file/d/1K2_1Tvs8JqrLzOFYCmnhNxfts_hF2zoE/view?usp=drive_link\
+https://drive.google.com/file/d/1DXhjjnvwY12fmLEczFSIqKEmBuNpIC0H/view?usp=sharing
+
+## Reference
+
+- [Technical doc](https://docs.ens.domains/dapp-developer-guide/ens-l2-offchain#l2-resolver)
+- [ERC 3668](https://eips.ethereum.org/EIPS/eip-3668)
 
 ## TODO
 
 - Fix the problem of not decoding metadata.coinType
 - Replace hard coded chainId to the one dynamically fetched from metadata
+- Replace hard coded l2 graphql url
 - Tidy up code
-- Add custom argument to verifier so that users can set their own graphql endpoint
-- Call l2 graphql to show custom record (multichain and text record)
-- Call l2 graphql to show subnames
