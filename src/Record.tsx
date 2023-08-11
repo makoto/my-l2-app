@@ -53,7 +53,7 @@ function Record() {
     connector: new InjectedConnector(),
   })
   const textRecords = useEthersText(currentUser?.username, texts)
-  const addrRecords = useEthersText(currentUser?.username, coinTypes)
+  const addrRecords = useEthersAddr(currentUser?.username, coinTypes)
   const contentRecords = useEthersContenthash(currentUser?.username, coinTypes)
   const address = useEthers(currentUser?.username)
 
@@ -72,7 +72,7 @@ function Record() {
   const isDataSync = l2AddrData === address
   return(
     <div>
-      <h3>Record</h3>
+      <h3>ETH Address</h3>
       <ul>
         <li>
           ETH Address on Goerli via CCIP-read: {address}
@@ -86,6 +86,18 @@ function Record() {
           <li style={{color:"orange"}}>L1 data and l2 are out of sync</li>
         )}
       </ul>
+      <h3>Other Address Record</h3>
+      <ul>
+      {
+        coinTypes.filter((c:string) => c !== '60').map((key:string, index:number)=> {
+          const record = addrRecords[index]
+          const val = record && record["val"]
+          return (<li>
+            {key}:{val}
+          </li>)
+        })
+      }
+      </ul>
       <h3>Text Record</h3>
       <ul>
       {
@@ -97,13 +109,13 @@ function Record() {
           </li>)
         })
       }
+      </ul>
       <h3>Contenthash</h3>
       {contentRecords && (
         <div>
           {contentRecords}
         </div>
       )}
-      </ul>
     </div>
   )
 }
