@@ -14,9 +14,11 @@ interface CurrentUserContextType {
     username?: string | null
     resolver?: ResolverType | null
     nameOwner?: string | null
+    isWrapped?: boolean | null
     setUsername: (name: string) => void
     setResolver: (address: any) => void
     setNameOwner: (address: any) => void
+    setIsWrapped: (isWrapped: boolean) => void
 }
   
   

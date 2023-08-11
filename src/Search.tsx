@@ -57,6 +57,7 @@ function Search() {
     return id && utils.getAddress(id)
   }
   const nameOwner = extractOwner(domain)
+  const isWrapped = !!domain?.wrappedOwner
   const isArray = (val: unknown): val is number[] => (
     Array.isArray(val)
   );
@@ -87,6 +88,7 @@ function Search() {
   useEffect(() => {
     if(!!nameOwner && !queryLoading){
       currentUser?.setNameOwner(nameOwner)
+      currentUser?.setIsWrapped(isWrapped)
     }    
   }, [nameOwner]);
 

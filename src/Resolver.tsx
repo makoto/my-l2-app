@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import CurrentUserContext from './Context'
-import { Heading, Card,  Button, Input, Dropdown, Spinner, Tag } from '@ensdomains/thorin'
+import { Heading, Card, Tag, Button, Input, Dropdown, Spinner } from '@ensdomains/thorin'
 import EditRecord from './EditRecord'
 import Record from './Record'
 import { useAccount, useContractWrite, useContractRead, useSwitchNetwork, useConnect, useDisconnect } from 'wagmi'
@@ -11,7 +11,7 @@ import {abi as ENSAbi} from './ENS'
 import { abi as CCIPAbi } from './CcipResolver'
 
 const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
-
+const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
   const Resolver = () => {
     const BASE_URL = "https://ccip-resolver-y3ur7hmkna-uc.a.run.app"
     const L2_PUBLIC_RESOLVER_VERIFIER = "0x183C1F81D0159794973c157694627a689DEB9F72"
@@ -40,7 +40,14 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
       functionName: 'setResolver',
       chainId: 5
     })
-  
+
+    const { isLoading:setWrapperResolverIsLoading, write: writeWrapper } = useContractWrite({
+      address: wrapperAddress,
+      abi: ENSAbi,
+      functionName: 'setResolver',
+      chainId: 5
+    })
+
     const { isLoading:setVerifierContractIsLoading, write:setVerifierWrite } = useContractWrite({
       address: bedrockResolverAddress,
       abi: CCIPAbi,
@@ -58,7 +65,7 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
     })
     const isOwnedByUser = currentUser?.nameOwner === address
     const isBedrockResolver = currentUser?.resolver?.address === bedrockResolverAddress
-    const cannotSetResolver = chain?.id !== 5 || setResolverIsLoading || !isOwnedByUser
+    const cannotSetResolver = chain?.id !== 5 || setResolverIsLoading || setWrapperResolverIsLoading || !isOwnedByUser
     const cannotSetVerifier = chain?.id !== 5 || setVerifierContractIsLoading || !isOwnedByUser || !isBedrockResolver
     const cannotSwitchToOp  = chain?.id !== 5 || !isOwnedByUser || !isBedrockResolver
     const isArray = (val: unknown): val is number[] => (
@@ -121,6 +128,21 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
           </Card>
           <div>
             <Heading> How to setup up Record on L2</Heading>
+            {!isOwnedByUser && (
+              <div>
+                <Tag colorStyle="redSecondary">You cannot set resolver because you do not own the name</Tag>
+              </div>
+            )}
+            {chain?.id !== 5 && (
+              <div>
+                <Tag colorStyle="redSecondary">You cannot set resolver because you are not connected to Goerli</Tag>
+              </div>
+            )}
+            {(setResolverIsLoading || setWrapperResolverIsLoading) && (
+              <div>
+                <Tag colorStyle="redSecondary">You cannot set resolver while loading resolver</Tag>
+              </div>
+            )}
             <h3>Step 1: Change Resolver to Bedrock CCIP Resolver</h3>
             {cannotSetResolver? (<Button disabled={true} style={{width:'200px'}} >Select Resolver</Button>) : (
             <Dropdown
@@ -129,14 +151,22 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
                 {
                   label: 'Default Resolver',
                   onClick: () => {
-                    write({args:[node, defaultResolverAddress]})
+                    if(currentUser?.isWrapped){
+                      writeWrapper({args:[node, defaultResolverAddress]})
+                    }else{
+                      write({args:[node, defaultResolverAddress]})
+                    }
                   },  
                   color: 'text'
                 },
                 {
                   label: 'Bedrock Ccip Resolver',
                   onClick: () => {
-                    write({args:[node, bedrockResolverAddress]})
+                    if(currentUser?.isWrapped){
+                      writeWrapper({args:[node, bedrockResolverAddress]})
+                    }else{
+                      write({args:[node, bedrockResolverAddress]})
+                    }
                   },  
                   color: 'red'
                 },

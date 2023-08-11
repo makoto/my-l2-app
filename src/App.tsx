@@ -27,6 +27,7 @@ const App = () => {
   const [address, setAddress] = useState(null)
   const [network, setNetwork] = useState(null)
   const [nameOwner, setNameOwner] = useState(null)
+  const [isWrapped, setIsWrapped] = useState(false)
   
   const client = new ApolloClient({
     cache: new InMemoryCache(),
@@ -44,7 +45,8 @@ const App = () => {
         <CurrentUserContext.Provider value={{
           username, setUsername,
           resolver, setResolver,
-          nameOwner, setNameOwner
+          nameOwner, setNameOwner,
+          isWrapped, setIsWrapped
         }}>
           <Profile></Profile>
       </CurrentUserContext.Provider>
