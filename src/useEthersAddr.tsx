@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { ethers } from 'ethers';
+import { ethers, utils, BigNumber } from 'ethers';
 import CurrentUserContext from './Context'
 import { getNetwork } from '@wagmi/core'
 // Cannot use wagmi while  l2 gateway is hosted locally 
@@ -20,7 +20,9 @@ export default function useEthersAddr(name:string | null | undefined, coinTypes:
       provider.getResolver(name).then(r => {
         const promises = coinTypes.map(coinType => {
           return new Promise(resolve => {
-            r?.getAddress(coinType).then(a => {
+            const encodedCoinType = utils.hexZeroPad(BigNumber.from(coinType).toHexString(), 32)
+            r?._fetchBytes('0xf1cb7e06', encodedCoinType).then(a => {
+              console.log({a})
               resolve(a)
             }).catch(e => {console.log('*** useEthersAddr error', e)})
           })
