@@ -131,7 +131,7 @@ function EditRecord() {
         onChange={(evt) => setInputEth(evt.target.value) }
       />
       <Button
-        disabled={cannotEditL2Record}
+        disabled={cannotEditL2Record || !inputEth}
         style={{width:'100px'}}
         onClick={() => {
           console.log({encodedName, coinType, inputEth})
@@ -182,7 +182,7 @@ function EditRecord() {
         />
       </div>
       <Button
-        disabled={cannotEditL2Record}
+        disabled={cannotEditL2Record || !inputKey || !inputVal}
         style={{width:'100px'}}
         onClick={() => writeText({args:[encodedName, inputKey, inputVal]})}
       >{textIsLoading ? (<Spinner></Spinner>): (<div>Update</div>)}</Button>

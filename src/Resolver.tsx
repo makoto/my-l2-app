@@ -16,6 +16,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
     const BASE_URL = "https://ccip-resolver-y3ur7hmkna-uc.a.run.app"
     const L2_PUBLIC_RESOLVER_VERIFIER = "0x183C1F81D0159794973c157694627a689DEB9F72"
     const [url, setUrl] = useState(`${BASE_URL}/{sender}/{data}`)
+    const [toggle, setToggle] = useState(false)
     const [newVerifierAddress, setNewVerifierAddress] = useState(L2_PUBLIC_RESOLVER_VERIFIER)
   
     const defaultResolverAddress = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
@@ -84,11 +85,17 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
       return (
         <div>
           <Card>
-            <h5>{currentUser?.username}</h5>
+            <h5>{currentUser?.username} (<a href="#" onClick={()=>{
+              setToggle(!toggle)
+            }}>{toggle ? ('Less') : ('More')}</a>)</h5>
             <ul>
+              {toggle && (
+                <div>
+                  <li>Node: {node}</li>
+                  <li>Encoded name: {name}</li>
+                </div>
+              )}
               <li>Owned by {currentUser?.nameOwner}.</li>
-              <li>Node: {node}</li>
-              <li>Encoded name: {name}</li>
               <li>Resolver is {currentUser?.resolver?.address}.</li>
             </ul>            
             { currentUser?.resolver?.networkName && (
@@ -100,7 +107,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
                     href="https://github.com/ensdomains/docs/blob/95983d0d02bf4cbab7644871749c5f669d1392cf/ens-improvement-proposals/ensip-15-ccip-read-metadata.md#specification"
                     target="_blank"
 
-                  >(More info)</a>
+                  >(What is Metadata?)</a>
                 </div>
                 <ul>
                   <li>
@@ -179,7 +186,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
             <a
             href="https://github.com/corpus-io/ENS-Bedrock-Resolver#l2publicresolververifier-l1"
             target="_blank"
-            >(More info)</a>
+            >(What is verifier?)</a>
 
             </div>
             {getVerifierOfDomainData ? (
