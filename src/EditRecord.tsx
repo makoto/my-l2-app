@@ -57,11 +57,12 @@ function EditRecord() {
   console.log({inputContenthash, encodedContenthash})
   return (
     <div>
-      Select ETH, 
-      <a href="https://chainlist.org" target="_blank" >ChainID</a> for EVM chains,
-      or <a href="https://github.com/satoshilabs/slips/blob/master/slip-0044.md" target="_blank" >
+      Select ETH or
+      <a href="https://chainlist.org" target="_blank" >ChainID</a> for EVM chains
+      {/* , */}
+      {/* or <a href="https://github.com/satoshilabs/slips/blob/master/slip-0044.md" target="_blank" >
         Coin type
-      </a> for non EVM chains
+      </a> for non EVM chains */}
       {cannotEditL2Record ? (<Button disabled={true} style={{width:'200px'}} >Address Type</Button>) : (
               <Dropdown
               align="left"
@@ -74,13 +75,13 @@ function EditRecord() {
                   },
                   color: 'text'
                 },
-                {
-                  label: 'CoinType',
-                  onClick: () => {
-                    setCoinType('')
-                    setInputType('CoinType')
-                  },
-                },
+                // {
+                //   label: 'CoinType',
+                //   onClick: () => {
+                //     setCoinType('')
+                //     setInputType('CoinType')
+                //   },
+                // },
                 {
                   label: 'ChainID',
                   onClick: () => {

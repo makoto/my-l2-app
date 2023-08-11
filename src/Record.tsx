@@ -17,6 +17,14 @@ import useEthers from './useEthers';
 import useEthersAddr from './useEthersAddr'
 import useEthersContenthash from './useEthersContenthash'
 
+export const SLIP44_MSB = 0x80000000
+export const convertCoinTypeToEVMChainId = (coinType: number) =>{
+  if( (coinType & SLIP44_MSB) === 0 ){
+    return coinType
+  }
+  return  ((SLIP44_MSB - 1) & coinType) >> 0
+}
+
 // TODO: This should be set dynamically based on URL passed from metadata endpoint
 const l2client = new ApolloClient({
   cache: new InMemoryCache(),
@@ -92,8 +100,11 @@ function Record() {
         coinTypes.filter((c:string) => c !== '60').map((key:string, index:number)=> {
           const record = addrRecords[index]
           const val = record && record["val"]
+          const chainId = convertCoinTypeToEVMChainId(parseInt(key))
           return (<li>
-            {key}:{val}
+            coinType {key}
+            (chainId {chainId})
+            :{val}
           </li>)
         })
       }
