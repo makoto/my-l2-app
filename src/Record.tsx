@@ -89,7 +89,9 @@ function Record() {
       <h3>Text Record</h3>
       <ul>
       {
-        textRecords.map(({key, val})=> {
+        texts.map((key:string, index:number)=> {
+          const record = textRecords[index]
+          const val = record && record["val"]
           return (<li>
             {key}:{val}
           </li>)
