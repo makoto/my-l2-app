@@ -67,7 +67,6 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
     const isBedrockResolver = currentUser?.resolver?.address === bedrockResolverAddress
     const cannotSetResolver = chain?.id !== 5 || setResolverIsLoading || setWrapperResolverIsLoading || !isOwnedByUser
     const cannotSetVerifier = chain?.id !== 5 || setVerifierContractIsLoading || !isOwnedByUser || !isBedrockResolver
-    const cannotSwitchToOp  = chain?.id !== 5 || !isOwnedByUser || !isBedrockResolver
     const isArray = (val: unknown): val is number[] => (
       Array.isArray(val)
     );
@@ -80,6 +79,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
       verifierAddress = parsed.verifierAddress
       verifierNode = getVerifierOfDomainData[1]
     }
+    const cannotSwitchToOp  = chain?.id !== 5 || !isOwnedByUser || !isBedrockResolver || !verifierAddress
     if(currentUser?.resolver?.address){
       return (
         <div>
