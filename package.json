@@ -6,7 +6,7 @@
   "dependencies": {
     "@apollo/client": "^3.7.17",
     "@ensdomains/address-encoder": "^0.2.21",
-    "@ensdomains/content-hash": "^2.5.7",
+    "@ensdomains/content-hash": "^3.0.0",
     "@ensdomains/thorin": "^0.6.40",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

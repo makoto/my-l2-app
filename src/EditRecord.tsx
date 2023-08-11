@@ -48,8 +48,13 @@ function EditRecord() {
   })
 
   const encodedName = utils.dnsEncode(currentUser?.username || '');
-  // const encodedContenthash = encode(encodedName)
-  // console.log({inputContenthash, encodedContenthash})
+  let encodedContenthash:string = ''
+  try{
+    encodedContenthash = encode("ipfs", inputContenthash)
+  }catch(e){
+    console.log({e})
+  }
+  console.log({inputContenthash, encodedContenthash})
   return (
     <div>
       Select ETH, 
@@ -142,16 +147,18 @@ function EditRecord() {
 
       <div style={{display:"flex"}}>
         <Input
-          width="72"
-          label="New Contenthash"
-          placeholder=""
+          width="144"
+          label="New IPFS Contenthash"
+          placeholder="bafybeibj6lixxzqtsb45ysdjnupvqkufgdvzqbnvmhw2kf7cfkesy7r7d4"
           onChange={(evt) => setInputContenthash(evt.target.value) }
         />
       </div>
+      {encodedContenthash && (<div>encoded:{encodedContenthash}
+</div>)}
       <Button
-        disabled={cannotEditL2Record}
+        disabled={cannotEditL2Record || encodedContenthash === '' }
         style={{width:'100px'}}
-        onClick={() => writeContenthash({args:[encodedName, inputContenthash]})}
+        onClick={() => writeContenthash({args:[encodedName, encodedContenthash]})}
       >{contenthashIsLoading ? (<Spinner></Spinner>): (<div>Update</div>)}</Button>
       {contenthashData? (<div>
         <a style={{color:"blue"}}
