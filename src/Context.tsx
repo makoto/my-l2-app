@@ -9,6 +9,7 @@ interface ResolverType {
     context?: any
     nameOwner?: string
     refetch?: () => void
+    refetchMetadata?: () => void
 }
 
 interface CurrentUserContextType {

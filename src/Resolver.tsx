@@ -44,9 +44,12 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
     const { data:waitWriteData, isLoading:waitWriteIsLoading } = useWaitForTransaction({
       hash: writeData?.hash,
       enabled: !!writeData,
-      onSuccess(data) {
+      onSuccess() {
         if(currentUser?.resolver?.refetch){
           currentUser?.resolver?.refetch()
+        }
+        if(currentUser?.resolver?.refetchMetadata){
+          currentUser?.resolver?.refetchMetadata()
         }
       },
     })
@@ -64,6 +67,9 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
         if(currentUser?.resolver?.refetch){
           currentUser?.resolver?.refetch()
         }
+        if(currentUser?.resolver?.refetchMetadata){
+          currentUser?.resolver?.refetchMetadata()
+        }
       },
     })
     console.log({writeWrapperData, waitWriteWrapperData})
@@ -79,6 +85,9 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
       enabled: !!setVerifierWriteData,
       onSuccess() {
         getVerifierOfDomainRefetch()
+        if(currentUser?.resolver?.refetchMetadata){
+          currentUser?.resolver?.refetchMetadata()
+        }
       },
     })
 

@@ -39,7 +39,7 @@ function Search() {
   }catch(e){
     console.log('***search error',{e})
   }
-  const { data , error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({
+  const { data , error, isError:contractIsError, isLoading:contractIsLoading, refetch:refetchMetadata } = useContractRead({
     address: resolverAddress,
     abi,
     functionName: 'metadata',
@@ -64,7 +64,6 @@ function Search() {
   let networkName: any, coinType: any, graphqlUrl: any
   let storageType: any, storageLocation: any, context:any
   if (isArray(data)) {
-
     networkName = data[0]
     coinType = data[1]
     graphqlUrl = data[2]
@@ -82,7 +81,8 @@ function Search() {
         storageType,
         storageLocation,
         context,
-        refetch
+        refetch,
+        refetchMetadata
       })
     }    
   }, [resolverAddress, networkName]);
