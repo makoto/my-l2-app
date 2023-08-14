@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
 
 import { useContractWrite, useContractRead, useConnect, useAccount, useNetwork, usePublicClient } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
@@ -26,10 +26,6 @@ export const convertCoinTypeToEVMChainId = (coinType: number) =>{
 }
 
 // TODO: This should be set dynamically based on URL passed from metadata endpoint
-const l2client = new ApolloClient({
-  cache: new InMemoryCache(),
-  uri: "https://api.thegraph.com/subgraphs/name/makoto/ens-l2-subgraph-makototest1"
-});
 const GET_NAME = gql`
   query GetDomains($name: String!) {
     domains(where:{name:$name}) {
@@ -47,10 +43,22 @@ const GET_NAME = gql`
 
 function Record() {
   const currentUser = useContext(CurrentUserContext);
+  const [l2client, setl2Client] = useState(null);
+  useEffect(() => {
+    if(currentUser?.resolver?.graphqlUrl){
+      let c:any = new ApolloClient({
+        cache: new InMemoryCache(),
+        uri: currentUser?.resolver?.graphqlUrl
+      })
+      setl2Client(c)
+    }    
+  }, [currentUser?.resolver?.graphqlUrl]);
+  
+  const skip = (!currentUser?.username || !l2client)
   const { loading:queryLoading, error:queryError, data:queryData } = useQuery(GET_NAME, {
-    client: l2client,
+    client: l2client || undefined,
     variables: { name: currentUser?.username },
-    skip:(!currentUser?.username)
+    skip
   });
   const domain = queryData?.domains[0]
   const coinTypes = domain?.resolver?.coinTypes || []
@@ -65,7 +73,6 @@ function Record() {
   const contentRecords = useEthersContenthash(currentUser?.username, coinTypes)
   const address = useEthers(currentUser?.username)
 
-  console.log({username: currentUser?.username, coinTypes, addrRecords})
   const l2resolverAddress=currentUser?.resolver?.storageLocation
   const context = currentUser?.resolver?.context || ''
   const node = ethers.utils.namehash(currentUser?.username || '');
