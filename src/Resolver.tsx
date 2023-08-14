@@ -74,8 +74,15 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
       functionName: 'setVerifierForDomain',
       chainId: 5
     })
+    const { data:waitSetVerifierWriteData, isLoading:waitSetVerifierWriteDataIsLoading } = useWaitForTransaction({
+      hash: setVerifierWriteData?.hash,
+      enabled: !!setVerifierWriteData,
+      onSuccess() {
+        getVerifierOfDomainRefetch()
+      },
+    })
 
-    const { data: getVerifierOfDomainData, error:getVerifierOfDomainError, isError:getVerifierOfDomainContractIsError, isLoading:getVerifierOfDomainContractIsLoading } = useContractRead({
+    const { data: getVerifierOfDomainData, error:getVerifierOfDomainError, isError:getVerifierOfDomainContractIsError, isLoading:getVerifierOfDomainContractIsLoading, refetch:getVerifierOfDomainRefetch } = useContractRead({
       address: bedrockResolverAddress,
       abi: CCIPAbi,
       functionName: 'getVerifierOfDomain',
@@ -100,6 +107,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
       verifierNode = getVerifierOfDomainData[1]
     }
     const cannotSwitchToOp  = chain?.id !== 5 || !isOwnedByUser || !isBedrockResolver || !verifierAddress
+    console.log({cannotSwitchToOp, chainId:chain?.id, isOwnedByUser, isBedrockResolver, verifierAddress})
     if(currentUser?.resolver?.address){
       return (
         <div>
@@ -212,7 +220,6 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
             href="https://github.com/corpus-io/ENS-Bedrock-Resolver#l2publicresolververifier-l1"
             target="_blank"
             >(What is verifier?)</a>
-
             </div>
             {getVerifierOfDomainData ? (
               <Card>
@@ -242,6 +249,13 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
             }}  >
               {setVerifierContractIsLoading ? (<Spinner></Spinner>) : ('Set Verifier')}
             </Button>
+            {setVerifierWriteData? (<div>
+              <a style={{color:"blue"}}
+                target="_blank" href={`https://goerli-optimism.etherscan.io/tx/${setVerifierWriteData.hash}`}>
+                {setVerifierWriteData.hash}
+              </a>
+            </div>) : '' }
+
           </div>
           
           <h3>Step 3: Switch Network to OP Goerli</h3>
