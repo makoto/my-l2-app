@@ -81,7 +81,8 @@ function Search() {
         graphqlUrl,
         storageType,
         storageLocation,
-        context
+        context,
+        refetch
       })
     }    
   }, [resolverAddress, networkName]);

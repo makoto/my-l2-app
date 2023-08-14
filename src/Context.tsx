@@ -8,6 +8,7 @@ interface ResolverType {
     storageLocation?: any
     context?: any
     nameOwner?: string
+    refetch?: () => void
 }
 
 interface CurrentUserContextType {

@@ -3,7 +3,7 @@ import CurrentUserContext from './Context'
 import { Heading, Card, Tag, Button, Input, Dropdown, Spinner } from '@ensdomains/thorin'
 import EditRecord from './EditRecord'
 import Record from './Record'
-import { useAccount, useContractWrite, useContractRead, useSwitchNetwork, useConnect, useDisconnect } from 'wagmi'
+import { useAccount, useContractWrite, useWaitForTransaction, useContractRead, useSwitchNetwork, useConnect, useDisconnect } from 'wagmi'
 import { getNetwork } from '@wagmi/core'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { utils } from 'ethers'
@@ -35,21 +35,40 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
     
     const node = utils.namehash(currentUser?.username || '');
     const name = utils.dnsEncode(currentUser?.username || '');
-    const { isLoading:setResolverIsLoading, write } = useContractWrite({
+    const { data:writeData, isLoading:setResolverIsLoading, write } = useContractWrite({
       address: registryAddress,
       abi: ENSAbi,
       functionName: 'setResolver',
-      chainId: 5
+      chainId: 5,
+    })
+    const { data:waitWriteData, isLoading:waitWriteIsLoading } = useWaitForTransaction({
+      hash: writeData?.hash,
+      enabled: !!writeData,
+      onSuccess(data) {
+        if(currentUser?.resolver?.refetch){
+          currentUser?.resolver?.refetch()
+        }
+      },
     })
 
-    const { isLoading:setWrapperResolverIsLoading, write: writeWrapper } = useContractWrite({
+    const { data:writeWrapperData, isLoading:setWrapperResolverIsLoading, write: writeWrapper } = useContractWrite({
       address: wrapperAddress,
       abi: ENSAbi,
       functionName: 'setResolver',
       chainId: 5
     })
+    const { data:waitWriteWrapperData, isLoading:waitWriteWrapperIsLoading } = useWaitForTransaction({
+      hash: writeWrapperData?.hash,
+      enabled: !!writeWrapperData,
+      onSuccess(data) {
+        if(currentUser?.resolver?.refetch){
+          currentUser?.resolver?.refetch()
+        }
+      },
+    })
+    console.log({writeWrapperData, waitWriteWrapperData})
 
-    const { isLoading:setVerifierContractIsLoading, write:setVerifierWrite } = useContractWrite({
+    const { data:setVerifierWriteData, isLoading:setVerifierContractIsLoading, write:setVerifierWrite } = useContractWrite({
       address: bedrockResolverAddress,
       abi: CCIPAbi,
       functionName: 'setVerifierForDomain',
@@ -174,6 +193,19 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
               label="Select Resolver"
             />
             )}
+            {writeData? (<div>
+              <a style={{color:"blue"}}
+                target="_blank" href={`https://goerli-optimism.etherscan.io/tx/${writeData.hash}`}>
+                {writeData.hash}
+              </a>
+            </div>) : '' }
+            {writeWrapperData? (<div>
+              <a style={{color:"blue"}}
+                target="_blank" href={`https://goerli-optimism.etherscan.io/tx/${writeWrapperData.hash}`}>
+                {writeWrapperData.hash}
+              </a>
+            </div>) : '' }
+
             <div style={{display:'flex'}}>
             <h3>Step 2: Set verifier</h3>
             <a
