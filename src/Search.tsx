@@ -28,14 +28,14 @@ function Search() {
 
   const currentUser = useContext(CurrentUserContext);
   const [name, setName] = useState('');
-  const { data:resolverAddress, isError, isLoading } = useEnsResolver({
+  const { data:resolverAddress, isError, isLoading, refetch } = useEnsResolver({
     name: currentUser?.username,
     enabled:!!currentUser?.username,
     chainId: GOERLI_CHAINID
   })
   let encodedName
   try{
-    encodedName = dnsEncode(name)
+    encodedName = dnsEncode(currentUser?.username || '')
   }catch(e){
     console.log('***search error',{e})
   }
@@ -97,6 +97,8 @@ function Search() {
   }
   function searchName() {
     currentUser?.setUsername(name)
+    refetch()
+
   }
   function clearName() {
     currentUser?.setResolver({})
