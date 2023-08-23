@@ -90,17 +90,18 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
         }
       },
     })
-
+    const isBedrockResolver = currentUser?.resolver?.address === bedrockResolverAddress
     const { data: getVerifierOfDomainData, error:getVerifierOfDomainError, isError:getVerifierOfDomainContractIsError, isLoading:getVerifierOfDomainContractIsLoading, refetch:getVerifierOfDomainRefetch } = useContractRead({
-      address: bedrockResolverAddress,
+      address: currentUser?.resolver?.address as `0x${string}`,
       abi: CCIPAbi,
       functionName: 'getVerifierOfDomain',
       args: [name],
-      enabled:!!(currentUser?.username),
+      enabled:!!(currentUser?.resolver?.address),
       chainId: 5
     })
+    console.log({isBedrockResolver, getVerifierOfDomainData})
+
     const isOwnedByUser = currentUser?.nameOwner === address
-    const isBedrockResolver = currentUser?.resolver?.address === bedrockResolverAddress
     const cannotSetResolver = chain?.id !== 5 || setResolverIsLoading || setWrapperResolverIsLoading || !isOwnedByUser
     const cannotSetVerifier = chain?.id !== 5 || setVerifierContractIsLoading || !isOwnedByUser || !isBedrockResolver
     const isArray = (val: unknown): val is number[] => (
@@ -212,13 +213,13 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
             )}
             {writeData? (<div>
               <a style={{color:"blue"}}
-                target="_blank" href={`https://goerli-optimism.etherscan.io/tx/${writeData.hash}`}>
+                target="_blank" href={`https://goerli.etherscan.io/tx/${writeData.hash}`}>
                 {writeData.hash}
               </a>
             </div>) : '' }
             {writeWrapperData? (<div>
               <a style={{color:"blue"}}
-                target="_blank" href={`https://goerli-optimism.etherscan.io/tx/${writeWrapperData.hash}`}>
+                target="_blank" href={`https://goerli.etherscan.io/tx/${writeWrapperData.hash}`}>
                 {writeWrapperData.hash}
               </a>
             </div>) : '' }
@@ -260,7 +261,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
             </Button>
             {setVerifierWriteData? (<div>
               <a style={{color:"blue"}}
-                target="_blank" href={`https://goerli-optimism.etherscan.io/tx/${setVerifierWriteData.hash}`}>
+                target="_blank" href={`https://etherscan.io/tx/${setVerifierWriteData.hash}`}>
                 {setVerifierWriteData.hash}
               </a>
             </div>) : '' }
