@@ -16,6 +16,7 @@ function Balance(props:any) {
           Balance: {balance.toFixed(3)} {data.symbol} on chain id {props.chainId}
           {props.chainId === 5 && ('(Goerli)')}
           {props.chainId === 420 && ('(OP Goerli)')}
+          {props.chainId === 84531 && ('(Base Goerli)')}
         </span>
         {(balance === 0 && props.chainId === 420) && (
           <span style={{color:"red"}}>(Bridge ETH from <a href="https://app.optimism.io/bridge/deposit" target="_blank">the bridge</a>)</span>

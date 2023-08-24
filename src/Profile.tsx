@@ -38,6 +38,7 @@ function Profile() {
           <div>
             <Balance chainId={5} ></Balance>
             <Balance chainId={420} ></Balance>
+            <Balance chainId={84531} ></Balance>
             <Search />
             <Resolver />
           </div>

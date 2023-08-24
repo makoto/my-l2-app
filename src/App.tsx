@@ -6,7 +6,7 @@ import { CopySVG, EthSVG, WalletSVG, MoonSVG, Select, Card } from '@ensdomains/t
 import { Checkbox } from '@ensdomains/thorin'
 import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 import { publicProvider} from 'wagmi/providers/public'
-import { goerli, optimismGoerli } from 'wagmi/chains'
+import { goerli, optimismGoerli, baseGoerli } from 'wagmi/chains'
 import { createPublicClient, http } from 'viem'
 import Profile from './Profile'
 import Balance from './Balance'
@@ -15,7 +15,7 @@ import Resolver from './Resolver'
 import CurrentUserContext from './Context'
 import { ethers } from 'ethers';
 
-const { chains, publicClient, webSocketPublicClient} = configureChains([mainnet, goerli, optimismGoerli], [publicProvider()])
+const { chains, publicClient, webSocketPublicClient} = configureChains([mainnet, goerli, optimismGoerli, baseGoerli], [publicProvider()])
 const config = createConfig({
   autoConnect: true,
   publicClient,
