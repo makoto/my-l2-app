@@ -20,8 +20,8 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
     const [newVerifierAddress, setNewVerifierAddress] = useState(L2_PUBLIC_RESOLVER_VERIFIER)
   
     const defaultResolverAddress = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
-    const bedrockResolverAddress = '0xaeB973dA621Ed58F0D8bfD6299031E8a2Ac39FD4'
-    
+
+    const bedrockResolverAddress = '0xD86Df6b144fBf36E207bF42d14C896422E63fE05'
     const currentUser = useContext(CurrentUserContext);
     const { connect } = useConnect({
       connector: new InjectedConnector(),

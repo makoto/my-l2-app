@@ -82,7 +82,8 @@ function Record() {
     functionName: 'addr',
     args: [context, node],
     enabled:!!(currentUser?.username),
-    chainId: 420
+    chainId: 84531
+    // chainId: 420
   })
   const isDataSync = l2AddrData === address
   return(
