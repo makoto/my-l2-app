@@ -27,5 +27,5 @@ https://drive.google.com/file/d/1DXhjjnvwY12fmLEczFSIqKEmBuNpIC0H/view?usp=shari
 
 - Fix the problem of not decoding metadata.coinType
 - Replace hard coded chainId to the one dynamically fetched from metadata
-- Replace hard coded l2 graphql url
-- Tidy up code
+- Replace hard coded bedrock resolver address
+- Add base resolver contract into drop down
