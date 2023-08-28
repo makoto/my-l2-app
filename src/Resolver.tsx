@@ -15,14 +15,12 @@ const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
   const Resolver = () => {
     const BASE_URL = "https://ccip-resolver-y3ur7hmkna-uc.a.run.app"
-    const L2_PUBLIC_RESOLVER_VERIFIER = "0x183C1F81D0159794973c157694627a689DEB9F72"
     const [url, setUrl] = useState(`${BASE_URL}/{sender}/{data}`)
     const [toggle, setToggle] = useState(false)
-    const [newVerifierAddress, setNewVerifierAddress] = useState(L2_PUBLIC_RESOLVER_VERIFIER)
   
     const defaultResolverAddress = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
-
-    const bedrockResolverAddress = '0xD86Df6b144fBf36E207bF42d14C896422E63fE05'
+    const bedrockResolverAddress = '0xaeB973dA621Ed58F0D8bfD6299031E8a2Ac39FD4'
+    const baseResolverAddress = '0x8cC5263a98161129EBd9C5Ab4fB39D99c767726d'
     const currentUser = useContext(CurrentUserContext);
     const { connect } = useConnect({
       connector: new InjectedConnector(),
@@ -75,22 +73,6 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
     })
     console.log({writeWrapperData, waitWriteWrapperData})
 
-    const { data:setVerifierWriteData, isLoading:setVerifierContractIsLoading, write:setVerifierWrite } = useContractWrite({
-      address: bedrockResolverAddress,
-      abi: CCIPAbi,
-      functionName: 'setVerifierForDomain',
-      chainId: 5
-    })
-    const { data:waitSetVerifierWriteData, isLoading:waitSetVerifierWriteDataIsLoading } = useWaitForTransaction({
-      hash: setVerifierWriteData?.hash,
-      enabled: !!setVerifierWriteData,
-      onSuccess() {
-        getVerifierOfDomainRefetch()
-        if(currentUser?.resolver?.refetchMetadata){
-          currentUser?.resolver?.refetchMetadata()
-        }
-      },
-    })
     const isBedrockResolver = currentUser?.resolver?.address === bedrockResolverAddress
     const { data: getVerifierOfDomainData, error:getVerifierOfDomainError, isError:getVerifierOfDomainContractIsError, isLoading:getVerifierOfDomainContractIsLoading, refetch:getVerifierOfDomainRefetch } = useContractRead({
       address: currentUser?.resolver?.address as `0x${string}`,
@@ -104,18 +86,16 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
 
     const isOwnedByUser = currentUser?.nameOwner === address
     const cannotSetResolver = chain?.id !== 5 || setResolverIsLoading || setWrapperResolverIsLoading || !isOwnedByUser
-    const cannotSetVerifier = chain?.id !== 5 || setVerifierContractIsLoading || !isOwnedByUser || !isBedrockResolver
     const isArray = (val: unknown): val is number[] => (
       Array.isArray(val)
     );
-    let ccipVerifier, gatewayUrls, verifierAddress, verifierNode
+    let ccipVerifier, gatewayUrls, verifierAddress
     if(isArray(getVerifierOfDomainData)){
       ccipVerifier = getVerifierOfDomainData[0]
       // Types are blowing up so had to workd around.
       const parsed = JSON.parse(JSON.stringify(ccipVerifier))
       gatewayUrls = parsed.gatewayUrls
       verifierAddress = parsed.verifierAddress
-      verifierNode = getVerifierOfDomainData[1]
     }
     const cannotSwitchToOp  = chain?.id !== 5 || !isOwnedByUser || !isBedrockResolver || !verifierAddress
     console.log({cannotSwitchToOp, chainId:chain?.id, isOwnedByUser, isBedrockResolver, verifierAddress})
@@ -146,6 +126,21 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
             </ul>
             { currentUser?.resolver?.networkName && (
               <div>
+              {getVerifierOfDomainData ? (
+              <div style={{marginBottom:'1em'}}>
+                <div style={{display:'flex'}}>
+                  <h5>Verifier</h5>
+                  <a
+            href="https://github.com/corpus-io/ENS-Bedrock-Resolver#l2publicresolververifier-l1"
+            target="_blank"
+            >(What is verifier?)</a>
+                </div>
+                <ul>
+                  <li>Verifier address:{verifierAddress}</li>
+                  <li>Gateway urls: {JSON.stringify(gatewayUrls)}</li>
+                </ul>
+              </div>
+              ): ''}
                 <div style={{display:'flex'}}>
                   <h5>Metadata
                   </h5>
@@ -199,7 +194,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
                   color: 'text'
                 },
                 {
-                  label: 'Bedrock Ccip Resolver',
+                  label: 'Optimism Resolver',
                   onClick: () => {
                     if(currentUser?.isWrapped){
                       writeWrapper({args:[node, bedrockResolverAddress]})
@@ -209,6 +204,17 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
                   },  
                   color: 'red'
                 },
+                {
+                  label: 'BASE Resolver',
+                  onClick: () => {
+                    if(currentUser?.isWrapped){
+                      writeWrapper({args:[node, baseResolverAddress]})
+                    }else{
+                      write({args:[node, baseResolverAddress]})
+                    }
+                  },  
+                  color: 'blue'
+                }
               ]}
               label="Select Resolver"
             />
@@ -225,49 +231,6 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
                 {writeWrapperData.hash}
               </a>
             </div>) : '' }
-
-            <div style={{display:'flex'}}>
-            <h3>Step 2: Set verifier</h3>
-            <a
-            href="https://github.com/corpus-io/ENS-Bedrock-Resolver#l2publicresolververifier-l1"
-            target="_blank"
-            >(What is verifier?)</a>
-            </div>
-            {getVerifierOfDomainData ? (
-              <Card>
-                <ul>
-                  <li>Verifier address:{verifierAddress}</li>
-                  <li>Gateway urls: {JSON.stringify(gatewayUrls)}</li>
-                  <li>node:{verifierNode}</li>
-                </ul>
-              </Card>
-            ): ''}
-            <Input
-              label="Verifier address"
-              defaultValue={newVerifierAddress}
-              onChange={(e)=>{setNewVerifierAddress(e.target.value)}}
-            ></Input>
-            <Input
-              label="Verifier url"
-              defaultValue={url}
-              onChange={(e)=>{setUrl(e.target.value)}}
-            ></Input>
-            <Button
-              disabled={cannotSetVerifier}
-              style={{width:'150px'}} onClick={ () => {
-              setVerifierWrite({
-                args:[node, newVerifierAddress, [url]]
-              })
-            }}  >
-              {setVerifierContractIsLoading ? (<Spinner></Spinner>) : ('Set Verifier')}
-            </Button>
-            {setVerifierWriteData? (<div>
-              <a style={{color:"blue"}}
-                target="_blank" href={`https://etherscan.io/tx/${setVerifierWriteData.hash}`}>
-                {setVerifierWriteData.hash}
-              </a>
-            </div>) : '' }
-
           </div>
           
           <h3>Step 3: Switch Network to OP Goerli</h3>
