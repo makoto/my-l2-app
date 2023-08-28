@@ -7,6 +7,7 @@ import { useAccount, useContractWrite, useWaitForTransaction, useContractRead, u
 import { getNetwork } from '@wagmi/core'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { utils } from 'ethers'
+import { convertCoinTypeToEVMChainId } from './utils'
 import {abi as ENSAbi} from './ENS'
 import { abi as CCIPAbi } from './CcipResolver'
 
@@ -160,6 +161,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
                   </li>
                   <li>
                     Coin Type: {currentUser?.resolver.coinType}
+                    (Chain ID : {convertCoinTypeToEVMChainId(currentUser?.resolver.coinType)})
                   </li>
                   <li>
                     Graphql Url:{currentUser?.resolver.graphqlUrl}
