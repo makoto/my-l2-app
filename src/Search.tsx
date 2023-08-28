@@ -65,7 +65,7 @@ function Search() {
   let storageType: any, storageLocation: any, context:any
   if (isArray(data)) {
     networkName = data[0]
-    coinType = data[1]
+    coinType = Number(data[1])
     graphqlUrl = data[2]
     storageType = data[3]
     storageLocation = data[4]
