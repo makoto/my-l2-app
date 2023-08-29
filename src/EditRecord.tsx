@@ -6,15 +6,7 @@ import { abi as l2abi } from './L2PublicResolver'
 import { utils } from 'ethers'
 import { getNetwork } from '@wagmi/core'
 import { decode, encode } from "@ensdomains/content-hash";
-
-export const SLIP44_MSB = 0x80000000
-export const convertEVMChainIdToCoinType = (chainId: number) =>{
-  if( chainId >= SLIP44_MSB ){
-    throw Error(`chainId ${chainId} must be less than ${SLIP44_MSB}`)
-  }
-  return  (SLIP44_MSB | chainId) >>> 0
-}
-
+import { convertEVMChainIdToCoinType, getChainInfo } from './utils'
 function EditRecord() {
   const { chain } = getNetwork()
   const [inputType, setInputType] = useState('ETH')
@@ -27,24 +19,26 @@ function EditRecord() {
   
   const currentUser = useContext(CurrentUserContext);
   const l2resolverAddress=currentUser?.resolver?.storageLocation
-  const cannotEditL2Record = chain?.id !== 420
+  const CHAIN_INFO = getChainInfo(currentUser?.resolver?.chainId || 0)
+  const l2ExplorerUrl = CHAIN_INFO?.blockExplorerUrls[0]
+  const cannotEditL2Record = chain?.id !== currentUser?.resolver?.chainId
   const { data:ethData, isLoading:ethIsLoading, isSuccess:ethIsSuccess, write:writeAddr } = useContractWrite({
     address: l2resolverAddress,
     abi: l2abi,
     functionName: 'setAddr',
-    chainId: 420
+    chainId: currentUser?.resolver?.chainId
   })
   const { data:textData, isLoading:textIsLoading, isSuccess:textIsSuccess, write:writeText } = useContractWrite({
     address: l2resolverAddress,
     abi: l2abi,
     functionName: 'setText',
-    chainId: 420
+    chainId: currentUser?.resolver?.chainId
   })
   const { data:contenthashData, isLoading:contenthashIsLoading, isSuccess:contenthashIsSuccess, write:writeContenthash } = useContractWrite({
     address: l2resolverAddress,
     abi: l2abi,
     functionName: 'setContenthash',
-    chainId: 420
+    chainId: currentUser?.resolver?.chainId
   })
 
   const encodedName = utils.dnsEncode(currentUser?.username || '');
@@ -75,13 +69,6 @@ function EditRecord() {
                   },
                   color: 'text'
                 },
-                // {
-                //   label: 'CoinType',
-                //   onClick: () => {
-                //     setCoinType('')
-                //     setInputType('CoinType')
-                //   },
-                // },
                 {
                   label: 'ChainID',
                   onClick: () => {
@@ -141,7 +128,7 @@ function EditRecord() {
       >{ethIsLoading ? (<Spinner></Spinner>): (<div>Update</div>)}</Button>
       {ethData? (<div>
         <a style={{color:"blue"}}
-          target="_blank" href={`https://goerli-optimism.etherscan.io/tx/${ethData.hash}`}>
+          target="_blank" href={`${l2ExplorerUrl}/tx/${ethData.hash}`}>
           {ethData.hash}
         </a>
       </div>) : '' }
@@ -163,7 +150,7 @@ function EditRecord() {
       >{contenthashIsLoading ? (<Spinner></Spinner>): (<div>Update</div>)}</Button>
       {contenthashData? (<div>
         <a style={{color:"blue"}}
-          target="_blank" href={`https://goerli-optimism.etherscan.io/tx/${contenthashData.hash}`}>
+          target="_blank" href={`${l2ExplorerUrl}/tx/${contenthashData.hash}`}>
           {contenthashData.hash}
         </a>
       </div>) : '' }
@@ -189,7 +176,7 @@ function EditRecord() {
       >{textIsLoading ? (<Spinner></Spinner>): (<div>Update</div>)}</Button>
       {textData? (<div>
         <a style={{color:"blue"}}
-          target="_blank" href={`https://goerli-optimism.etherscan.io/tx/${textData.hash}`}>
+          target="_blank" href={`${l2ExplorerUrl}/tx/${textData.hash}`}>
           {textData.hash}
         </a>
       </div>) : '' }

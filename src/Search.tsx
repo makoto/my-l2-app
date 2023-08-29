@@ -6,7 +6,7 @@ import { utils } from 'ethers'
 import CurrentUserContext from './Context'
 import {abi} from './CcipResolver'
 import { dnsEncode } from "ethers/lib/utils";
-const GOERLI_CHAINID = 5
+import { L1_CHAIN_ID, convertCoinTypeToEVMChainId } from './utils'
 const GET_NAME = gql`
   query GetDomains($name: String!) {
     domains(where:{name:$name}) {
@@ -28,10 +28,11 @@ function Search() {
 
   const currentUser = useContext(CurrentUserContext);
   const [name, setName] = useState('');
+  console.log({currentUser})
   const { data:resolverAddress, isError, isLoading, refetch } = useEnsResolver({
     name: currentUser?.username,
     enabled:!!currentUser?.username,
-    chainId: GOERLI_CHAINID
+    chainId: L1_CHAIN_ID
   })
   let encodedName
   try{
@@ -45,7 +46,7 @@ function Search() {
     functionName: 'metadata',
     args: [ encodedName ],
     enabled:!!encodedName && !!resolverAddress,
-    chainId: GOERLI_CHAINID
+    chainId: L1_CHAIN_ID
   })
   const { loading:queryLoading, error:queryError, data:queryData } = useQuery(GET_NAME, {
     variables: { name: currentUser?.username },
@@ -73,10 +74,12 @@ function Search() {
   }
   useEffect(() => {
     if(resolverAddress){
+      console.log('***convertCoinTypeToEVMChainId2', coinType)
       currentUser?.setResolver({
         address: resolverAddress,
         networkName,
         coinType,
+        chainId:convertCoinTypeToEVMChainId(coinType),
         graphqlUrl,
         storageType,
         storageLocation,
@@ -97,6 +100,7 @@ function Search() {
     setName(event.target.value)
   }
   function searchName() {
+    console.log({name})
     currentUser?.setUsername(name)
     refetch()
 

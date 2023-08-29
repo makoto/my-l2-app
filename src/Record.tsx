@@ -3,27 +3,15 @@ import { useState, useEffect, useContext } from 'react'
 import { useContractWrite, useContractRead, useConnect, useAccount, useNetwork, usePublicClient } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { gql, useQuery } from '@apollo/client';
-import { PublicClient, Transport } from "viem";
-import { useEnsText } from './useEnsText'
-import { getNetwork } from '@wagmi/core'
-import { abi } from './CcipResolver'
 import { abi as l2abi } from './L2PublicResolver'
 import CurrentUserContext from './Context'
-import { Button } from '@ensdomains/thorin'
 import {ethers} from 'ethers'
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import useEthersText from './useEthersText'
 import useEthers from './useEthers';
 import useEthersAddr from './useEthersAddr'
 import useEthersContenthash from './useEthersContenthash'
-
-export const SLIP44_MSB = 0x80000000
-export const convertCoinTypeToEVMChainId = (coinType: number) =>{
-  if( (coinType & SLIP44_MSB) === 0 ){
-    return coinType
-  }
-  return  ((SLIP44_MSB - 1) & coinType) >> 0
-}
+import {convertCoinTypeToEVMChainId} from './utils'
 
 // TODO: This should be set dynamically based on URL passed from metadata endpoint
 const GET_NAME = gql`
@@ -62,7 +50,7 @@ function Record() {
   });
   const domain = queryData?.domains[0]
   const coinTypes = domain?.resolver?.coinTypes || []
-  const texts = domain?.resolver?.texts || []
+  const texts = domain?.resolver?.texts || ['twitter.com']
   const { chain } = useNetwork()
   const { connector, isConnected } = useAccount()
   const { connect } = useConnect({
@@ -82,8 +70,7 @@ function Record() {
     functionName: 'addr',
     args: [context, node],
     enabled:!!(currentUser?.username),
-    chainId: 84531
-    // chainId: 420
+    chainId: currentUser?.resolver?.chainId
   })
   const isDataSync = l2AddrData === address
   return(
@@ -94,7 +81,7 @@ function Record() {
           ETH Address on Goerli via CCIP-read: {address}
         </li>
         <li>
-          ETH Address for {context.slice(0,5)}... on OP: { JSON.stringify(l2AddrData) }
+          ETH Address for {context.slice(0,5)}... on L2: { JSON.stringify(l2AddrData) }
         </li>
         {isDataSync ? (
           <li style={{color:"green"}}>L1 data and l2 are in sync</li>
@@ -108,6 +95,7 @@ function Record() {
         coinTypes.filter((c:string) => c !== '60').map((key:string, index:number)=> {
           const record = addrRecords[index]
           const val = record && record["val"]
+          console.log('***convertCoinTypeToEVMChainId1', key)
           const chainId = convertCoinTypeToEVMChainId(parseInt(key))
           return (<li>
             coinType {key}

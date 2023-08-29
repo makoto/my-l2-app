@@ -2,7 +2,8 @@ import React, { useState, useEffect, createContext } from 'react';
 interface ResolverType {
     address?: string
     networkName?: string,
-    coinType?: any
+    coinType?: number
+    chainId?: number
     graphqlUrl?: any
     storageType?: any
     storageLocation?: any

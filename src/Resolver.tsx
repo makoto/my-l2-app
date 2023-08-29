@@ -7,9 +7,21 @@ import { useAccount, useContractWrite, useWaitForTransaction, useContractRead, u
 import { getNetwork } from '@wagmi/core'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { utils } from 'ethers'
-import { convertCoinTypeToEVMChainId } from './utils'
+import { L1_CHAIN_ID, L2_CHAIN_IDS, getChainInfo } from './utils'
+
 import {abi as ENSAbi} from './ENS'
 import { abi as CCIPAbi } from './CcipResolver'
+interface ChainInfoType {
+  chainId: string,
+  rpcUrls: string[],
+  chainName: string,
+  nativeCurrency: {
+    name: string,
+    symbol: string,
+    decimals: number
+  },
+  blockExplorerUrls: string[]
+}
 
 const registryAddress = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
 const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
@@ -38,7 +50,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
       address: registryAddress,
       abi: ENSAbi,
       functionName: 'setResolver',
-      chainId: 5,
+      chainId: L1_CHAIN_ID,
     })
     const { data:waitWriteData, isLoading:waitWriteIsLoading } = useWaitForTransaction({
       hash: writeData?.hash,
@@ -57,7 +69,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
       address: wrapperAddress,
       abi: ENSAbi,
       functionName: 'setResolver',
-      chainId: 5
+      chainId: L1_CHAIN_ID
     })
     const { data:waitWriteWrapperData, isLoading:waitWriteWrapperIsLoading } = useWaitForTransaction({
       hash: writeWrapperData?.hash,
@@ -71,21 +83,20 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
         }
       },
     })
-    console.log({writeWrapperData, waitWriteWrapperData})
-
-    const isBedrockResolver = currentUser?.resolver?.address === bedrockResolverAddress
+    
+    const isL2Resolver = L2_CHAIN_IDS.includes(currentUser?.resolver?.chainId || 0)
     const { data: getVerifierOfDomainData, error:getVerifierOfDomainError, isError:getVerifierOfDomainContractIsError, isLoading:getVerifierOfDomainContractIsLoading, refetch:getVerifierOfDomainRefetch } = useContractRead({
       address: currentUser?.resolver?.address as `0x${string}`,
       abi: CCIPAbi,
       functionName: 'getVerifierOfDomain',
       args: [name],
       enabled:!!(currentUser?.resolver?.address),
-      chainId: 5
+      chainId: L1_CHAIN_ID
     })
-    console.log({isBedrockResolver, getVerifierOfDomainData})
 
     const isOwnedByUser = currentUser?.nameOwner === address
-    const cannotSetResolver = chain?.id !== 5 || setResolverIsLoading || setWrapperResolverIsLoading || !isOwnedByUser
+    console.log({chainId:chain?.id, setResolverIsLoading, setWrapperResolverIsLoading, isOwnedByUser})
+    const cannotSetResolver = chain?.id !== L1_CHAIN_ID || setResolverIsLoading || setWrapperResolverIsLoading || !isOwnedByUser
     const isArray = (val: unknown): val is number[] => (
       Array.isArray(val)
     );
@@ -97,9 +108,12 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
       gatewayUrls = parsed.gatewayUrls
       verifierAddress = parsed.verifierAddress
     }
-    const cannotSwitchToOp  = chain?.id !== 5 || !isOwnedByUser || !isBedrockResolver || !verifierAddress
-    console.log({cannotSwitchToOp, chainId:chain?.id, isOwnedByUser, isBedrockResolver, verifierAddress})
-    if(currentUser?.resolver?.address){
+    const cannotSwitchToL2  = chain?.id !== 5 || !isOwnedByUser || !isL2Resolver || !verifierAddress
+    console.log({cannotSwitchToL2, chainId:chain?.id, isOwnedByUser, isL2Resolver, verifierAddress})
+    let l2param:ChainInfoType | undefined
+    if(currentUser?.resolver?.address && currentUser.resolver?.chainId){
+      const l2param = getChainInfo(currentUser.resolver.chainId)
+      console.log({l2param})
       return (
         <div>
           <Card>
@@ -156,7 +170,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
                   </li>
                   <li>
                     Coin Type: {currentUser?.resolver.coinType}
-                    (Chain ID : {convertCoinTypeToEVMChainId(currentUser?.resolver.coinType)})
+                    (Chain ID : {currentUser?.resolver.chainId})
                   </li>
                   <li>
                     Graphql Url:{currentUser?.resolver.graphqlUrl}
@@ -177,7 +191,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
           </Card>
           <div>
             <Heading> How to setup up Record on L2</Heading>
-            <h3>Step 1: Change Resolver to Bedrock CCIP Resolver</h3>
+            <h3>Step 1: Change Resolver to L2 Resolver (Optimism, Base)</h3>
             {cannotSetResolver? (<Button disabled={true} style={{width:'200px'}} >Select Resolver</Button>) : (
             <Dropdown
               align="left"
@@ -233,29 +247,21 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
             </div>) : '' }
           </div>
           
-          <h3>Step 3: Switch Network to OP Goerli</h3>
+          <h3>Step 3: Switch Network to L2</h3>
           <Button
-          disabled={cannotSwitchToOp}
+          disabled={cannotSwitchToL2}
           style={{width:'16em'}}
           onClick={()=>{
-            window.ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [{
-                chainId: "0x1a4",
-                rpcUrls: ["https://endpoints.omniatech.io/v1/op/goerli/public"],
-                chainName: "Optimism Goerli Testnet",
-                nativeCurrency: {
-                  name: "ETH",
-                  symbol: "ETH",
-                  decimals: 18
-                },
-                blockExplorerUrls: ["https://goerli-optimism.etherscan.io/"]
-              }]
-            }).catch((error:any)=>{
-              console.log('*** Add network error', {error})
-            });
+            if(currentUser.resolver?.chainId){
+              window.ethereum.request({
+                method: "wallet_addEthereumChain",
+                params: [l2param]
+              }).catch((error:any)=>{
+                console.log('*** Add network error', {error})
+              });  
+            }
           }}
-          >Switch to Op Goerli Network</Button>
+          >Switch to { l2param && l2param.chainName } </Button>
           <h3 style={{margin:'1em 0'}}>Step 4: Update Record on L2</h3>
           <EditRecord></EditRecord>
         </div>

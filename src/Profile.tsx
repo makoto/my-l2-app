@@ -8,7 +8,7 @@ import Balance from './Balance'
 import Search from './Search'
 import Resolver from './Resolver'
 import CurrentUserContext from './Context'
-
+import { L1_CHAIN_ID, OP_CHAIN_ID, BASE_CHAIN_ID } from './utils'
 function Profile() {
   const { address, connector, isConnected } = useAccount()
   const { connect } = useConnect({
@@ -36,9 +36,9 @@ function Profile() {
             </div>
           </div>
           <div>
-            <Balance chainId={5} ></Balance>
-            <Balance chainId={420} ></Balance>
-            <Balance chainId={84531} ></Balance>
+            <Balance chainId={ L1_CHAIN_ID } ></Balance>
+            <Balance chainId={ OP_CHAIN_ID } ></Balance>
+            <Balance chainId={ BASE_CHAIN_ID } ></Balance>
             <Search />
             <Resolver />
           </div>
@@ -48,7 +48,7 @@ function Profile() {
   return (
     <div>
       <Button style={{width: "150px"}} onClick={() => connect({
-            chainId: 5,
+            chainId: L1_CHAIN_ID,
             connector: new InjectedConnector(),
       })}>Connect</Button>
     </div>
