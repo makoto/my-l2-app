@@ -9,6 +9,7 @@ import Search from './Search'
 import Resolver from './Resolver'
 import CurrentUserContext from './Context'
 import { L1_CHAIN_ID, OP_CHAIN_ID, BASE_CHAIN_ID } from './utils'
+import { Link } from 'react-router-dom';
 function Profile() {
   const { address, connector, isConnected } = useAccount()
   const { connect } = useConnect({
@@ -32,7 +33,7 @@ function Profile() {
             <div>
               Connected on
               <Tag style={{ display: 'inline'  }} colorStyle={getColor(chain?.name)} >{chain?.name}</Tag>
-              as {address} 
+              as <Link to={`/user/${address}`}>{address}</Link>
             </div>
           </div>
           <div>
