@@ -24,10 +24,10 @@ const GET_NAME = gql`
   }
 `;
 
-function Search() {
+function Search(props:any) {
 
   const currentUser = useContext(CurrentUserContext);
-  const [name, setName] = useState('');
+  const [name, setName] = useState(props.name || '');
   console.log({currentUser})
   const { data:resolverAddress, isError, isLoading, refetch } = useEnsResolver({
     name: currentUser?.username,

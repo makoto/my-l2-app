@@ -48,6 +48,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Profile />} />
                 <Route path="/user/:address" element={<User />} />
+                <Route path="/name/:name" element={<Profile />} />
               </Routes>
             </CurrentUserContext.Provider>
             </FieldSet>

@@ -73,7 +73,7 @@ function User() {
     variables: { address:userAddress?.toLocaleLowerCase() }
   });
   const { data:opData } = useQuery(GET_ACCOUNT, {
-    client: baseClient,
+    client: opClient,
     variables: { address:userAddress?.toLocaleLowerCase() }
   });
 

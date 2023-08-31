@@ -10,7 +10,9 @@ import Resolver from './Resolver'
 import CurrentUserContext from './Context'
 import { L1_CHAIN_ID, OP_CHAIN_ID, BASE_CHAIN_ID } from './utils'
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 function Profile() {
+  const { name } = useParams()
   const { address, connector, isConnected } = useAccount()
   const { connect } = useConnect({
     connector: new InjectedConnector(),
@@ -40,7 +42,7 @@ function Profile() {
             <Balance chainId={ L1_CHAIN_ID } ></Balance>
             <Balance chainId={ OP_CHAIN_ID } ></Balance>
             <Balance chainId={ BASE_CHAIN_ID } ></Balance>
-            <Search />
+            <Search name={name} />
             <Resolver />
           </div>
         </div>
