@@ -1,6 +1,6 @@
 
 
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 
@@ -30,18 +30,20 @@ const opClient = new ApolloClient({
 })
 
 const List = (props:any) => {
-  const hasContexts = props?.queryData?.account?.contexts?.length > 0
-  const hasDelegated = props?.queryData?.account?.delegated?.length > 0
+  const contexts = props?.queryData?.account?.contexts?.filter((d:any) => { return d.name !== 'eth'}) || []
+  const delegations = props?.queryData?.account?.delegated?.filter((d:any) => { return d.name !== 'eth'}) || []
+  const hasContexts = contexts.length > 0
+  const hasDelegated = delegations.length > 0
   return(
     <div>
     {
       hasContexts && (
         <div>
-        <h5>Domains listed on {props.title}</h5>
+        <h5>{contexts.length} domains under the context found on {props.title}</h5>
         <ul>
           {
-            props?.queryData?.account?.contexts?.filter((d:any) => { return d.name !== 'eth'}).map((domain:any)=>{
-              return (<li>{domain.name}</li>)
+            contexts.map((domain:any)=>{
+              return (<li><Link to={`/name/${domain.name}`}>{domain.name}</Link></li>)
             })
           }
         </ul>
@@ -51,10 +53,10 @@ const List = (props:any) => {
     {
       hasDelegated && (
         <div>
-        <h5>Domains delegated on BASE</h5>
+        <h5>{delegations.length} domains delegated found on {props.title}</h5>
         <ul>
           {
-            props?.account?.delegated?.filter((d:any) => { return d.name !== 'eth'}).map((domain:any)=>{
+            delegations.map((domain:any)=>{
               return (<li>{domain.name}</li>)
             })
           }

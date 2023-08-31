@@ -25,7 +25,7 @@ const GET_NAME = gql`
 `;
 
 function Search(props:any) {
-
+  console.log('***Search', props)
   const currentUser = useContext(CurrentUserContext);
   const [name, setName] = useState(props.name || '');
   console.log({currentUser})
@@ -116,6 +116,7 @@ function Search(props:any) {
       <Input
         label="Search Name"
         placeholder="alice123.eth"
+        value={name}
         onChange={handleChange}
       />
       <div style={{display:'flex'}}>
