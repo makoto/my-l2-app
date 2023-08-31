@@ -74,12 +74,11 @@ function Search(props:any) {
   }
   useEffect(() => {
     if(resolverAddress){
-      console.log('***convertCoinTypeToEVMChainId2', coinType)
       currentUser?.setResolver({
         address: resolverAddress,
         networkName,
         coinType,
-        chainId:convertCoinTypeToEVMChainId(coinType),
+        chainId:coinType ? convertCoinTypeToEVMChainId(coinType) : null,
         graphqlUrl,
         storageType,
         storageLocation,
