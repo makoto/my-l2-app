@@ -50,7 +50,8 @@ function Record() {
   });
   const domain = queryData?.domains[0]
   const coinTypes = domain?.resolver?.coinTypes || []
-  const texts = domain?.resolver?.texts || ['twitter.com']
+  // Adding 'com.twitter' as a default key was causing infinite loop so disabled for now
+  const texts = domain?.resolver?.texts || []
   const { chain } = useNetwork()
   const { connector, isConnected } = useAccount()
   const { connect } = useConnect({
