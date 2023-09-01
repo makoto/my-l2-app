@@ -299,41 +299,44 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
           >Switch to { l2param && l2param.chainName } </Button>
           <h3 style={{margin:'1em 0'}}>Step 3: Update Record on L2</h3>
           <EditRecord parentContext={isApprovedForData && currentUser?.resolver?.parentContext } ></EditRecord>
-        
-        <div>
-          <Heading> Settign up Delegate</Heading>
-          <h3>You can let others to edit record of the name you own or their subnames</h3>
-          <div>
-          <Input
-            width="112"
-            label='Subname'
-            placeholder=""
-            onChange={(evt) => setSubname(evt.target.value) }
-          />.{currentUser?.username}
-          </div>
-          <Input
-            width="112"
-            label='Delegate'
-            placeholder=""
-            onChange={(evt) => setDelegate(evt.target.value) }
-          />
-          <Button
-          disabled={cannotApprove}
-          style={{width:'16em'}}
-          onClick={()=>{
-            const name = [subname, currentUser?.username].join('.')
-            const encodedName = utils.dnsEncode(name);
-            writeApprove({args:[encodedName, delegate, true]})
-            }}
-          >Add Delegate </Button>
-            {writeApproveData? (<div>
-              <a style={{color:"blue"}}
-                target="_blank" 
-                href={`${l2ExplorerUrl}/tx/${writeApproveData.hash}`}>
-                {writeApproveData.hash}
-              </a>
-            </div>) : '' }
-        </div>
+        {
+          isOwnedByUser && (
+            <div>
+            <Heading> Settign up Delegate</Heading>
+            <h3>You can let others to edit record of the name you own or their subnames</h3>
+            <div>
+            <Input
+              width="112"
+              label='Subname'
+              placeholder=""
+              onChange={(evt) => setSubname(evt.target.value) }
+            />.{currentUser?.username}
+            </div>
+            <Input
+              width="112"
+              label='Delegate'
+              placeholder=""
+              onChange={(evt) => setDelegate(evt.target.value) }
+            />
+            <Button
+            disabled={cannotApprove}
+            style={{width:'16em'}}
+            onClick={()=>{
+              const name = [subname, currentUser?.username].join('.')
+              const encodedName = utils.dnsEncode(name);
+              writeApprove({args:[encodedName, delegate, true]})
+              }}
+            >Add Delegate </Button>
+              {writeApproveData? (<div>
+                <a style={{color:"blue"}}
+                  target="_blank" 
+                  href={`${l2ExplorerUrl}/tx/${writeApproveData.hash}`}>
+                  {writeApproveData.hash}
+                </a>
+              </div>) : '' }
+          </div>  
+          )
+        }
         </div>      
       );
     }else{
