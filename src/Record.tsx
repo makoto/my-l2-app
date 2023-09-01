@@ -59,7 +59,7 @@ function Record() {
   })
   const textRecords = useEthersText(currentUser?.username, texts)
   const addrRecords = useEthersAddr(currentUser?.username, coinTypes)
-  const contentRecords = useEthersContenthash(currentUser?.username, coinTypes)
+  const contentRecords = useEthersContenthash(currentUser?.username)
   const address = useEthers(currentUser?.username)
 
   const l2resolverAddress=currentUser?.resolver?.storageLocation

@@ -5,7 +5,7 @@ import { getNetwork } from '@wagmi/core'
 // Cannot use wagmi while  l2 gateway is hosted locally 
 // Because wagmi uses UniversalResolver that tries to hit gateway from CloudFlare and CF cannot reach localhost
 
-export default function useEthersContenthash(name:string | null | undefined, coinTypes:number[]) {
+export default function useEthersContenthash(name:string | null | undefined) {
   const { chain, chains } = getNetwork()
   const [data, setData] = useState('');
   useEffect(() => {
