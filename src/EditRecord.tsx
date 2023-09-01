@@ -7,7 +7,8 @@ import { utils } from 'ethers'
 import { getNetwork } from '@wagmi/core'
 import { decode, encode } from "@ensdomains/content-hash";
 import { convertEVMChainIdToCoinType, getChainInfo } from './utils'
-function EditRecord() {
+function EditRecord(props:any) {
+
   const { chain } = getNetwork()
   const [inputType, setInputType] = useState('ETH')
   const [inputTypeChainId, setInputTypeChainId] = useState('')
@@ -25,30 +26,30 @@ function EditRecord() {
   const { data:ethData, isLoading:ethIsLoading, isSuccess:ethIsSuccess, write:writeAddr } = useContractWrite({
     address: l2resolverAddress,
     abi: l2abi,
-    functionName: 'setAddr',
+    functionName: `setAddr` + (!!props.parentContext && 'For'),
     chainId: currentUser?.resolver?.chainId
   })
   const { data:textData, isLoading:textIsLoading, isSuccess:textIsSuccess, write:writeText } = useContractWrite({
     address: l2resolverAddress,
     abi: l2abi,
-    functionName: 'setText',
+    functionName: 'setText' + (!!props.parentContext && 'For'),
     chainId: currentUser?.resolver?.chainId
   })
   const { data:contenthashData, isLoading:contenthashIsLoading, isSuccess:contenthashIsSuccess, write:writeContenthash } = useContractWrite({
     address: l2resolverAddress,
     abi: l2abi,
-    functionName: 'setContenthash',
+    functionName: 'setContenthash' + (!!props.parentContext && 'For'),
     chainId: currentUser?.resolver?.chainId
   })
 
   const encodedName = utils.dnsEncode(currentUser?.username || '');
+  const argPrefix = [props.parentContext,...[encodedName]]
   let encodedContenthash:string = ''
   try{
     encodedContenthash = encode("ipfs", inputContenthash)
   }catch(e){
     console.log({e})
   }
-  console.log({inputContenthash, encodedContenthash})
   return (
     <div>
       Select ETH or
@@ -122,8 +123,8 @@ function EditRecord() {
         disabled={cannotEditL2Record || !inputEth}
         style={{width:'100px'}}
         onClick={() => {
-          console.log({encodedName, coinType, inputEth})
-          writeAddr({args:[encodedName, coinType, inputEth]})
+          const args = [...argPrefix, ...[coinType, inputEth]]
+          writeAddr({args})
         }}
       >{ethIsLoading ? (<Spinner></Spinner>): (<div>Update</div>)}</Button>
       {ethData? (<div>
@@ -146,7 +147,10 @@ function EditRecord() {
       <Button
         disabled={cannotEditL2Record || encodedContenthash === '' }
         style={{width:'100px'}}
-        onClick={() => writeContenthash({args:[encodedName, encodedContenthash]})}
+        onClick={() => {
+          const args = [...argPrefix, ...[encodedContenthash]]
+          writeContenthash({args})
+        }}
       >{contenthashIsLoading ? (<Spinner></Spinner>): (<div>Update</div>)}</Button>
       {contenthashData? (<div>
         <a style={{color:"blue"}}
@@ -172,7 +176,10 @@ function EditRecord() {
       <Button
         disabled={cannotEditL2Record || !inputKey || !inputVal}
         style={{width:'100px'}}
-        onClick={() => writeText({args:[encodedName, inputKey, inputVal]})}
+        onClick={() => {
+          const args = [...argPrefix, ...[inputKey, inputVal]]
+          writeText({args})
+        }}
       >{textIsLoading ? (<Spinner></Spinner>): (<div>Update</div>)}</Button>
       {textData? (<div>
         <a style={{color:"blue"}}

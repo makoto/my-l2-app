@@ -57,7 +57,7 @@ const List = (props:any) => {
         <ul>
           {
             delegations.map((domain:any)=>{
-              return (<li>{domain.name}</li>)
+              return (<li><Link to={`/name/${domain.name}`}>{domain.name}</Link></li>)
             })
           }
         </ul>

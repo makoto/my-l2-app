@@ -8,6 +8,7 @@ import { getNetwork } from '@wagmi/core'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { utils } from 'ethers'
 import { L1_CHAIN_ID, L2_CHAIN_IDS, getChainInfo } from './utils'
+import { abi as l2abi } from './L2PublicResolver'
 
 import {abi as ENSAbi} from './ENS'
 import { abi as CCIPAbi } from './CcipResolver'
@@ -29,6 +30,8 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
     const BASE_URL = "https://ccip-resolver-y3ur7hmkna-uc.a.run.app"
     const [url, setUrl] = useState(`${BASE_URL}/{sender}/{data}`)
     const [toggle, setToggle] = useState(false)
+    const [subname, setSubname] = useState('')
+    const [delegate, setDelegate] = useState('')
   
     const defaultResolverAddress = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
     const bedrockResolverAddress = '0xaeB973dA621Ed58F0D8bfD6299031E8a2Ac39FD4'
@@ -93,10 +96,41 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
       enabled:!!(currentUser?.resolver?.address),
       chainId: L1_CHAIN_ID
     })
+    const { data: isApprovedForData, error:isApprovedForError, isError:isApprovedForIsError, isLoading:isApprovedForIsLoading, refetch:isApprovedForRefetch } = useContractRead({
+      address: currentUser?.resolver?.storageLocation as `0x${string}`,
+      abi: l2abi,
+      functionName: 'isApprovedFor',
+      args: [currentUser?.resolver?.parentContext, name, address],
+      enabled:!!(currentUser?.resolver?.address),
+      chainId: currentUser?.resolver?.chainId
+    })
+    const { data:writeApproveData, isLoading:approveIsLoading, write:writeApprove } = useContractWrite({
+      address: registryAddress,
+      abi: l2abi,
+      functionName: 'approve',
+      chainId: currentUser?.resolver?.chainId,
+    })
+    const { data:waitApproveData, isLoading:waitApproveIsLoading } = useWaitForTransaction({
+      hash: writeApproveData?.hash,
+      enabled: !!writeApproveData,
+      onSuccess(data) {
+        if(currentUser?.resolver?.refetch){
+          currentUser?.resolver?.refetch()
+        }
+        if(currentUser?.resolver?.refetchMetadata){
+          currentUser?.resolver?.refetchMetadata()
+        }
+      },
+    })
+
 
     const isOwnedByUser = currentUser?.nameOwner === address
     console.log({chainId:chain?.id, setResolverIsLoading, setWrapperResolverIsLoading, isOwnedByUser})
     const cannotSetResolver = chain?.id !== L1_CHAIN_ID || setResolverIsLoading || setWrapperResolverIsLoading || !isOwnedByUser
+    const cannotApprove = (chain?.id !== currentUser?.resolver?.chainId) 
+    const CHAIN_INFO = getChainInfo(currentUser?.resolver?.chainId || 0)
+    const l2ExplorerUrl = CHAIN_INFO?.blockExplorerUrls[0]
+  
     const isArray = (val: unknown): val is number[] => (
       Array.isArray(val)
     );
@@ -108,8 +142,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
       gatewayUrls = parsed.gatewayUrls
       verifierAddress = parsed.verifierAddress
     }
-    const cannotSwitchToL2  = chain?.id !== 5 || !isOwnedByUser || !isL2Resolver || !verifierAddress
-    console.log({cannotSwitchToL2, chainId:chain?.id, isOwnedByUser, isL2Resolver, verifierAddress})
+    const cannotSwitchToL2  = chain?.id !== 5 || !(isOwnedByUser || !!isApprovedForData) || !isL2Resolver || !verifierAddress
     let l2param:ChainInfoType | undefined
     if(currentUser?.resolver?.address && currentUser.resolver?.chainId){
       const l2param = getChainInfo(currentUser.resolver.chainId)
@@ -122,7 +155,9 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
             {isOwnedByUser ? (
               <Tag style={{ display: 'inline'  }} colorStyle="greenSecondary">owner</Tag>
             ) : (
-              <Tag style={{ display: 'inline'}} colorStyle="redSecondary">not owner</Tag>
+              isApprovedForData ? (
+                <Tag style={{ display: 'inline'}} colorStyle="yellowSecondary">delegate</Tag>
+              ) : (<Tag style={{ display: 'inline'}} colorStyle="redSecondary">not owner</Tag>)
             )}
             </span>
               {currentUser?.username} (<a href="#" onClick={()=>{
@@ -247,7 +282,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
             </div>) : '' }
           </div>
           
-          <h3>Step 3: Switch Network to L2</h3>
+          <h3>Step 2: Switch Network to L2</h3>
           <Button
           disabled={cannotSwitchToL2}
           style={{width:'16em'}}
@@ -262,9 +297,44 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
             }
           }}
           >Switch to { l2param && l2param.chainName } </Button>
-          <h3 style={{margin:'1em 0'}}>Step 4: Update Record on L2</h3>
-          <EditRecord></EditRecord>
+          <h3 style={{margin:'1em 0'}}>Step 3: Update Record on L2</h3>
+          <EditRecord parentContext={isApprovedForData && currentUser?.resolver?.parentContext } ></EditRecord>
+        
+        <div>
+          <Heading> Settign up Delegate</Heading>
+          <h3>You can let others to edit record of the name you own or their subnames</h3>
+          <div>
+          <Input
+            width="112"
+            label='Subname'
+            placeholder=""
+            onChange={(evt) => setSubname(evt.target.value) }
+          />.{currentUser?.username}
+          </div>
+          <Input
+            width="112"
+            label='Delegate'
+            placeholder=""
+            onChange={(evt) => setDelegate(evt.target.value) }
+          />
+          <Button
+          disabled={cannotApprove}
+          style={{width:'16em'}}
+          onClick={()=>{
+            const name = [subname, currentUser?.username].join('.')
+            const encodedName = utils.dnsEncode(name);
+            writeApprove({args:[encodedName, delegate, true]})
+            }}
+          >Add Delegate </Button>
+            {writeApproveData? (<div>
+              <a style={{color:"blue"}}
+                target="_blank" 
+                href={`${l2ExplorerUrl}/tx/${writeApproveData.hash}`}>
+                {writeApproveData.hash}
+              </a>
+            </div>) : '' }
         </div>
+        </div>      
       );
     }else{
       return(<></>)

@@ -11,9 +11,8 @@ import useEthersText from './useEthersText'
 import useEthers from './useEthers';
 import useEthersAddr from './useEthersAddr'
 import useEthersContenthash from './useEthersContenthash'
-import {convertCoinTypeToEVMChainId} from './utils'
+import {convertCoinTypeToEVMChainId, SLIP44_MSB} from './utils'
 
-// TODO: This should be set dynamically based on URL passed from metadata endpoint
 const GET_NAME = gql`
   query GetDomains($name: String!) {
     domains(where:{name:$name}) {
@@ -63,8 +62,20 @@ function Record() {
   const address = useEthers(currentUser?.username)
 
   const l2resolverAddress=currentUser?.resolver?.storageLocation
-  const context = currentUser?.resolver?.context || ''
+  // TODO: Potentially use UniversalResolver to get wildcard metadata
+  function getContext(resolver:any){
+    if(parseInt(currentUser?.resolver?.context) !== 0){
+      return currentUser?.resolver?.context
+    }else if(parseInt(currentUser?.resolver?.parentContext) !== 0){
+      return currentUser?.resolver?.parentContext
+    }else{
+      return ''
+    }
+  }
+  const context = getContext(currentUser?.resolver)
   const node = ethers.utils.namehash(currentUser?.username || '');
+  console.log({resolver:currentUser?.resolver, context, node})
+
   const { data:l2AddrData, error, isError:contractIsError, isLoading:contractIsLoading } = useContractRead({
     address: l2resolverAddress,
     abi: l2abi,
@@ -96,11 +107,15 @@ function Record() {
         coinTypes.filter((c:string) => c !== '60').map((key:string, index:number)=> {
           const record = addrRecords[index]
           const val = record && record["val"]
-          console.log('***convertCoinTypeToEVMChainId1', key)
-          const chainId = convertCoinTypeToEVMChainId(parseInt(key))
+          let chainId
+          try{
+            chainId = convertCoinTypeToEVMChainId(parseInt(key))
+          }catch(e){}
           return (<li>
             coinType {key}
-            (chainId {chainId})
+            {
+              chainId && (`(chainId ${chainId})`)
+            }            
             :{val}
           </li>)
         })

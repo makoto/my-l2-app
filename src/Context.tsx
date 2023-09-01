@@ -8,6 +8,7 @@ interface ResolverType {
     storageType?: any
     storageLocation?: any
     context?: any
+    parentContext?: any
     nameOwner?: string
     refetch?: () => void
     refetchMetadata?: () => void

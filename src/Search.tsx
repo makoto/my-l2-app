@@ -34,9 +34,12 @@ function Search(props:any) {
     enabled:!!currentUser?.username,
     chainId: L1_CHAIN_ID
   })
-  let encodedName
+  let encodedName, parentEncodedName, parentName
   try{
     encodedName = dnsEncode(currentUser?.username || '')
+    parentName = currentUser?.username?.split('.').slice(1).join('.')
+    console.log({parentName, name:currentUser?.username})
+    parentEncodedName = dnsEncode(parentName || '')
   }catch(e){
     console.log('***search error',{e})
   }
@@ -48,6 +51,15 @@ function Search(props:any) {
     enabled:!!encodedName && !!resolverAddress,
     chainId: L1_CHAIN_ID
   })
+  const { data:parentData , error:parentError, isError:parentIsError, isLoading:parentIsLoading, refetch:refetchParentMetadata } = useContractRead({
+    address: resolverAddress,
+    abi,
+    functionName: 'metadata',
+    args: [ parentEncodedName ],
+    enabled:!!encodedName && !!resolverAddress,
+    chainId: L1_CHAIN_ID
+  })
+  console.log({parentEncodedName, parentName, parentData})
   const { loading:queryLoading, error:queryError, data:queryData } = useQuery(GET_NAME, {
     variables: { name: currentUser?.username },
     skip:(!currentUser?.username)
@@ -63,7 +75,7 @@ function Search(props:any) {
     Array.isArray(val)
   );
   let networkName: any, coinType: any, graphqlUrl: any
-  let storageType: any, storageLocation: any, context:any
+  let storageType: any, storageLocation: any, context:any, parentContext:any
   if (isArray(data)) {
     networkName = data[0]
     coinType = Number(data[1])
@@ -72,6 +84,10 @@ function Search(props:any) {
     storageLocation = data[4]
     context = data[5]
   }
+  if (isArray(parentData)) {
+    parentContext = parentData[5]
+  }
+
   useEffect(() => {
     if(resolverAddress){
       currentUser?.setResolver({
@@ -83,6 +99,7 @@ function Search(props:any) {
         storageType,
         storageLocation,
         context,
+        parentContext,
         refetch,
         refetchMetadata
       })
