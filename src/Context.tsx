@@ -10,6 +10,7 @@ interface ResolverType {
     context?: any
     parentContext?: any
     nameOwner?: string
+    delegates?: string[]
     refetch?: () => void
     refetchMetadata?: () => void
 }

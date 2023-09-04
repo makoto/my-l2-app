@@ -59,7 +59,6 @@ function Search(props:any) {
     enabled:!!encodedName && !!resolverAddress,
     chainId: L1_CHAIN_ID
   })
-  console.log({parentEncodedName, parentName, parentData})
   const { loading:queryLoading, error:queryError, data:queryData } = useQuery(GET_NAME, {
     variables: { name: currentUser?.username },
     skip:(!currentUser?.username)
@@ -91,6 +90,7 @@ function Search(props:any) {
   useEffect(() => {
     if(resolverAddress){
       currentUser?.setResolver({
+        ...currentUser.resolver,  
         address: resolverAddress,
         networkName,
         coinType,

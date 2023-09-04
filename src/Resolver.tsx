@@ -9,7 +9,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { utils } from 'ethers'
 import { L1_CHAIN_ID, L2_CHAIN_IDS, getChainInfo } from './utils'
 import { abi as l2abi } from './L2PublicResolver'
-
+import { Link } from 'react-router-dom';
 import {abi as ENSAbi} from './ENS'
 import { abi as CCIPAbi } from './CcipResolver'
 interface ChainInfoType {
@@ -172,6 +172,16 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
               )}
               <li>Owned by {currentUser?.nameOwner}.</li>
               <li>Resolver is {currentUser?.resolver?.address}.</li>
+              {currentUser?.resolver?.delegates && (
+                <div>
+                  <li>Delegates</li>
+                  {
+                    (currentUser?.resolver?.delegates)?.map((d:any) => {
+                      return(<li><Link to={`/user/${d.id}`}>{d.id}</Link></li>)
+                    })
+                  }
+                </div>
+              )}
             </ul>
             { currentUser?.resolver?.networkName && (
               <div>

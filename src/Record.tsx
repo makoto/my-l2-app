@@ -14,8 +14,8 @@ import useEthersContenthash from './useEthersContenthash'
 import {convertCoinTypeToEVMChainId, SLIP44_MSB} from './utils'
 
 const GET_NAME = gql`
-  query GetDomains($name: String!) {
-    domains(where:{name:$name}) {
+  query GetDomains($name: String!, $context: String!) {
+    domains(where:{name:$name, context:$context}) {
       id
       name
       labelName
@@ -24,9 +24,21 @@ const GET_NAME = gql`
         texts
         coinTypes
       }
+      delegates{
+        id
+      }
     }
   }
 `;
+function getContext(resolver:any){
+  if(parseInt(resolver?.context) !== 0){
+    return resolver?.context
+  }else if(parseInt(resolver?.parentContext) !== 0){
+    return resolver?.parentContext
+  }else{
+    return ''
+  }
+}
 
 function Record() {
   const currentUser = useContext(CurrentUserContext);
@@ -40,14 +52,24 @@ function Record() {
       setl2Client(c)
     }    
   }, [currentUser?.resolver?.graphqlUrl]);
-  
+  const context = getContext(currentUser?.resolver)
+
   const skip = (!currentUser?.username || !l2client)
   const { loading:queryLoading, error:queryError, data:queryData } = useQuery(GET_NAME, {
     client: l2client || undefined,
-    variables: { name: currentUser?.username },
+    variables: { name: currentUser?.username, context },
     skip
   });
   const domain = queryData?.domains[0]
+  const delegates = domain?.delegates
+  useEffect(() => {
+    if(delegates){
+      currentUser?.setResolver({
+        ...currentUser?.resolver,
+        ...{delegates}
+      })
+    }    
+  }, [delegates]);
   const coinTypes = domain?.resolver?.coinTypes || []
   // Adding 'com.twitter' as a default key was causing infinite loop so disabled for now
   const texts = domain?.resolver?.texts || []
@@ -62,17 +84,6 @@ function Record() {
   const address = useEthers(currentUser?.username)
 
   const l2resolverAddress=currentUser?.resolver?.storageLocation
-  // TODO: Potentially use UniversalResolver to get wildcard metadata
-  function getContext(resolver:any){
-    if(parseInt(currentUser?.resolver?.context) !== 0){
-      return currentUser?.resolver?.context
-    }else if(parseInt(currentUser?.resolver?.parentContext) !== 0){
-      return currentUser?.resolver?.parentContext
-    }else{
-      return ''
-    }
-  }
-  const context = getContext(currentUser?.resolver)
   const node = ethers.utils.namehash(currentUser?.username || '');
   console.log({resolver:currentUser?.resolver, context, node})
 
