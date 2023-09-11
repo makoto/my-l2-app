@@ -35,7 +35,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
   
     const defaultResolverAddress = '0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750'
     const bedrockResolverAddress = '0xaeB973dA621Ed58F0D8bfD6299031E8a2Ac39FD4'
-    const baseResolverAddress = '0x8cC5263a98161129EBd9C5Ab4fB39D99c767726d'
+    const baseResolverAddress = '0x195724998eE4A8282bC1d63a1ebdD49AA2279833'
     const currentUser = useContext(CurrentUserContext);
     const { connect } = useConnect({
       connector: new InjectedConnector(),
@@ -105,7 +105,7 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
       chainId: currentUser?.resolver?.chainId
     })
     const { data:writeApproveData, isLoading:approveIsLoading, write:writeApprove } = useContractWrite({
-      address: registryAddress,
+      address: currentUser?.resolver?.storageLocation as `0x${string}`,
       abi: l2abi,
       functionName: 'approve',
       chainId: currentUser?.resolver?.chainId,
@@ -227,7 +227,10 @@ const wrapperAddress = '0x114D4603199df73e7D157787f8778E21fCd13066'
                     Storage Location:{currentUser?.resolver.storageLocation}
                   </li>
                   <li>
-                    Context:{currentUser?.resolver.context}
+                    Context:<Link to={`/user/${currentUser?.resolver.context}`}>{currentUser?.resolver.context}</Link>
+                  </li>
+                  <li>
+                    Parent Context:<Link to={`/user/${currentUser?.resolver.parentContext}`}>{currentUser?.resolver.parentContext}</Link>
                   </li>
                 </ul>
               </div>              
