@@ -23,27 +23,39 @@ function EditRecord(props:any) {
   const CHAIN_INFO = getChainInfo(currentUser?.resolver?.chainId || 0)
   const l2ExplorerUrl = CHAIN_INFO?.blockExplorerUrls[0]
   const cannotEditL2Record = chain?.id !== currentUser?.resolver?.chainId
+  const encodedName = utils.dnsEncode(currentUser?.username || '');
+  let setAddrFunction, setContenthashFunction, setTextFunction, argPrefix:string[]
+  if (!!props?.parentContext){
+    setAddrFunction = 'setAddrFor'
+    setContenthashFunction = 'setContenthashFor'
+    setTextFunction = 'setTextFor'
+    argPrefix = [props.parentContext,...[encodedName]]
+  }else{
+    setAddrFunction = 'setAddr' 
+    setContenthashFunction = 'setContenthash'
+    setTextFunction = 'setText'
+    argPrefix = [encodedName]
+  }
+  console.log({setAddrFunction})
   const { data:ethData, isLoading:ethIsLoading, isSuccess:ethIsSuccess, write:writeAddr } = useContractWrite({
     address: l2resolverAddress,
     abi: l2abi,
-    functionName: `setAddr` + (!!props.parentContext && 'For'),
+    functionName:setAddrFunction,
     chainId: currentUser?.resolver?.chainId
   })
   const { data:textData, isLoading:textIsLoading, isSuccess:textIsSuccess, write:writeText } = useContractWrite({
     address: l2resolverAddress,
     abi: l2abi,
-    functionName: 'setText' + (!!props.parentContext && 'For'),
+    functionName: setTextFunction,
     chainId: currentUser?.resolver?.chainId
   })
   const { data:contenthashData, isLoading:contenthashIsLoading, isSuccess:contenthashIsSuccess, write:writeContenthash } = useContractWrite({
     address: l2resolverAddress,
     abi: l2abi,
-    functionName: 'setContenthash' + (!!props.parentContext && 'For'),
+    functionName: setContenthashFunction,
     chainId: currentUser?.resolver?.chainId
   })
 
-  const encodedName = utils.dnsEncode(currentUser?.username || '');
-  const argPrefix = [props.parentContext,...[encodedName]]
   let encodedContenthash:string = ''
   try{
     encodedContenthash = encode("ipfs", inputContenthash)
@@ -124,6 +136,7 @@ function EditRecord(props:any) {
         style={{width:'100px'}}
         onClick={() => {
           const args = [...argPrefix, ...[coinType, inputEth]]
+          console.log('setAddr args', {argPrefix, args})
           writeAddr({args})
         }}
       >{ethIsLoading ? (<Spinner></Spinner>): (<div>Update</div>)}</Button>
