@@ -20,7 +20,7 @@ export const convertEVMChainIdToCoinType = (chainId: number) =>{
 
 const CHAIN_INFO={
   'op':{
-    chainId: "0x14a33",
+    chainId: "0x1a4",
     rpcUrls: ["https://endpoints.omniatech.io/v1/op/goerli/public"],
     chainName: "Optimism Goerli Testnet",
     nativeCurrency: {
